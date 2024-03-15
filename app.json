@@ -3,6 +3,7 @@
     "name": "easy-exit",
     "slug": "easy-exit",
     "version": "1.0.0",
+    "scheme": "easy-exit",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,6 +26,13 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ]
   }
 }
