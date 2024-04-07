@@ -1,13 +1,19 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import { Button,View } from 'tamagui';
-import {Link} from 'expo-router'
+import { Button, ButtonText, View } from 'tamagui';
+import { router } from 'expo-router';
 
 export default function register() {
-  return (<SafeAreaView>
-    <View>
-      <Button><Link href={'/register'}>Go to Register</Link></Button>
-    </View>
-  </SafeAreaView>
-  )
+  return (
+    <SafeAreaView>
+      <View>
+        <Button onPress={() => router.push('/register')}>
+          <ButtonText>Go to Login</ButtonText>
+        </Button>
+        <Button onPress={() => router.push('/createOrganization')}>
+          <ButtonText>Go to Create Organization</ButtonText>
+        </Button>
+      </View>
+    </SafeAreaView>
+  );
 }

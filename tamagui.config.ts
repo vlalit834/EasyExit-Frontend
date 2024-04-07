@@ -35,8 +35,8 @@ export const Container = styled(YStack, {
 });
 
 export const Main = styled(YStack, {
-  flex: 1,
-  // maxWidth: 960,
+  // flex: 1,
+  maxWidth: 960,
   justifyContent: 'space-between',
 });
 
@@ -48,6 +48,13 @@ export const Title = styled(Text, {
 export const Subtitle = styled(Text, {
   color: '#38434D',
   fontSize: 36,
+});
+
+export const Heading = styled(Text, {
+  color: '$blue1Dark',
+  fontSize: '$8',
+  marginBottom: '$4',
+  textAlign: 'center'
 });
 
 export const Button = styled(YStack, {
@@ -76,12 +83,6 @@ export const ButtonText = styled(Text, {
 });
 
 const config = createTamagui({
-  light: {
-    color: {
-      background: 'gray',
-      text: 'black',
-    },
-  },
   defaultFont: 'body',
   animations,
   shouldAddPrefersColorThemes: true,
