@@ -1,14 +1,14 @@
 import {
-  StyleSheet,
   Alert,
   TouchableWithoutFeedback,
   Keyboard,
   Linking,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View } from 'tamagui';
+import { View, Button, ButtonText, Select } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
 import Avatar from '@/components/Avatar';
@@ -18,11 +18,14 @@ import {
   requestMediaLibraryPermissionsAsync,
 } from 'expo-image-picker';
 import { Heading } from '@/tamagui.config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomTextInput from '@/components/CustomTextInput';
 
 export default function index() {
-  const [profileImg, setProfileImg] = useState<string>('');
-  const [error, setError] = useState<boolean>(false);
+  const [profileImg, setProfileImg] = React.useState<string>('');
+  const [name, setName] = React.useState<string>('');
+  const [email, setEmail] = React.useState<string>('');
+  const [password, setPassword] = React.useState<string>('');
+  const [error, setError] = React.useState<boolean>(false);
 
   const pickImage = async () => {
     if (!profileImg.length) {
@@ -70,11 +73,11 @@ export default function index() {
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View px='$4' ai='center'>
           <Heading>Hello! Register to Get Started</Heading>
-          <View ai='center'>
+          <View ai='center' marginBottom='$5' marginTop='$2'>
             {profileImg ?
               <Avatar imageUri={profileImg} />
             : <Ionicons
@@ -84,6 +87,29 @@ export default function index() {
               />
             }
           </View>
+          <CustomTextInput
+            value={name}
+            placeholder='Name'
+            id='name'
+            onChangeText={setName}
+          />
+          <CustomTextInput
+            value={email}
+            placeholder='Email'
+            id='email'
+            onChangeText={setEmail}
+            keyboardType='email-address'
+          />
+          <CustomTextInput
+            value={password}
+            placeholder='Password'
+            id='password'
+            onChangeText={setPassword}
+          />
+          <Select defaultValue='hone'></Select>
+          <Button w={'100%'} h={'$5'}>
+            <ButtonText>Register</ButtonText>
+          </Button>
         </View>
       </TouchableWithoutFeedback>
     </SafeAreaView>

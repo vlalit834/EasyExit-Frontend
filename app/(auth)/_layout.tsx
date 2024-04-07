@@ -31,6 +31,7 @@ export default function AuthLayout() {
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name='index' />
               <Stack.Screen name='register' />
+              <Stack.Screen name='createOrganization' />
             </Stack>
           </Theme>
         </GestureHandlerRootView>

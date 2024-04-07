@@ -64,7 +64,7 @@ export default function createOrganization() {
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: '#FFF5EA' }}>
+    <SafeAreaView style={{ backgroundColor: '#fbfdff' }}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View h={'100%'} w={'100%'} jc='flex-start' p={'$4'} ai='center'>
           <Heading>Create Organization</Heading>

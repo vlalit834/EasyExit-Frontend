@@ -5,10 +5,10 @@ import { router } from 'expo-router';
 
 export default function register() {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: '#fbfdff' }}>
       <View>
         <Button onPress={() => router.push('/register')}>
-          <ButtonText>Go to Login</ButtonText>
+          <ButtonText>Go to Register</ButtonText>
         </Button>
         <Button onPress={() => router.push('/createOrganization')}>
           <ButtonText>Go to Create Organization</ButtonText>
