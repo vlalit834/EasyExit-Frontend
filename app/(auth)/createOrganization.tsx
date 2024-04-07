@@ -43,7 +43,11 @@ export default function createOrganization() {
     }
   };
 
-  const handleTime = (event: DateTimePickerEvent, selectedDate: Date, isStartTime: boolean = true) => {
+  const handleTime = (
+    event: DateTimePickerEvent,
+    selectedDate: Date,
+    isStartTime: boolean = true,
+  ) => {
     if (event.type === 'dismissed' || !selectedDate) return;
     const currentDate = selectedDate || startTime;
     if (isStartTime) {
@@ -51,7 +55,7 @@ export default function createOrganization() {
     } else {
       setEndTime(currentDate);
     }
-  }
+  };
 
   const handleSubmit = async () => {
     if (!organizationName.length) {
@@ -68,7 +72,9 @@ export default function createOrganization() {
             <Avatar imageUri={organizationLogo} />
           : <Ionicons name='business' size={120} onPress={pickImage} />}
           <Form onSubmit={handleSubmit}>
-            <Label color={'$backgroundFocus'} htmlFor='name'>Organization Name</Label>
+            <Label color={'$backgroundFocus'} htmlFor='name'>
+              Organization Name
+            </Label>
             <Input
               id='name'
               placeholder='Organization Name'
@@ -77,18 +83,22 @@ export default function createOrganization() {
             />
             {error && <H6 color='red'>Organization name is required</H6>}
             <Label color={'$backgroundHover'}>Unrestricted Timing</Label>
-            <XStack >
+            <XStack>
               <RNDateTimePicker
                 display='clock'
                 collapsable={false}
-                onChange={(event, selectedDate) => handleTime(event, selectedDate)}
+                onChange={(event, selectedDate) =>
+                  handleTime(event, selectedDate)
+                }
                 value={startTime}
                 mode='time'
               />
               <RNDateTimePicker
                 display='compact'
                 collapsable={false}
-                onChange={(event, selectedDate) => handleTime(event, selectedDate,false)}
+                onChange={(event, selectedDate) =>
+                  handleTime(event, selectedDate, false)
+                }
                 value={endTime}
                 mode='time'
               />
