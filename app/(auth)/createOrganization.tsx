@@ -7,20 +7,24 @@ import {
   PermissionStatus,
 } from 'expo-image-picker';
 import React from 'react';
-import { Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { Alert, Keyboard, Linking, ToastAndroid, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Form, H6, Input, Label, View, XStack } from 'tamagui';
+import { Button, ButtonText, Form, H6, Label, View, XStack } from 'tamagui';
 import RNDateTimePicker, {
-  DateTimePickerAndroid,
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+import CustomTextInput from '@/components/CustomTextInput';
+import { router, useLocalSearchParams } from 'expo-router';
+import axios from 'axios';
 
 export default function createOrganization() {
   const [organizationName, setOrganizationName] = React.useState<string>('');
   const [organizationLogo, setOrganizationLogo] = React.useState<string>('');
   const [error, setError] = React.useState<boolean>(false);
-  const [startTime, setStartTime] = React.useState<Date>(new Date());
-  const [endTime, setEndTime] = React.useState<Date>(new Date());
+  const [startTime, setStartTime] = React.useState<Date>(null);
+  const [endTime, setEndTime] = React.useState<Date>(null);
+
+  const { name, email, password, profileImg } = useLocalSearchParams();
 
   const pickImage = async () => {
     if (!organizationLogo.length) {
@@ -30,7 +34,18 @@ export default function createOrganization() {
         Alert.alert(
           'Permission Denied',
           'We need Camera Roll permission to upload images',
-          [{ text: 'OK', style: 'cancel' }],
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'Open Settings',
+              onPress: () => {
+                Linking.openSettings();
+              },
+            },
+          ],
         );
       } else {
         const result = await launchImageLibraryAsync();
@@ -49,17 +64,34 @@ export default function createOrganization() {
     isStartTime: boolean = true,
   ) => {
     if (event.type === 'dismissed' || !selectedDate) return;
-    const currentDate = selectedDate || startTime;
     if (isStartTime) {
-      setStartTime(currentDate);
+      setStartTime(selectedDate);
     } else {
-      setEndTime(currentDate);
+      setEndTime(selectedDate);
     }
   };
 
   const handleSubmit = async () => {
-    if (!organizationName.length) {
+    if (!organizationName) {
       setError(true);
+      return;
+    }
+    const response = await axios.post(`${process.env.BACKEND_URL}/api/auth/register/admin`, {
+      name,
+      email,
+      password,
+      organizationName,
+      unrestrictedStartTime: startTime,
+      unrestrictedEndTime: endTime,
+      organizationLogo,
+      profileImg
+    });
+
+    if (response.status === 200) {
+      console.log('Organization Created');
+      router.replace('/home');
+    } else {
+      ToastAndroid.show(response.data?.message, ToastAndroid.SHORT);
     }
   };
 
@@ -75,7 +107,7 @@ export default function createOrganization() {
             <Label color={'$backgroundFocus'} htmlFor='name'>
               Organization Name
             </Label>
-            <Input
+            <CustomTextInput
               id='name'
               placeholder='Organization Name'
               value={organizationName}
@@ -94,7 +126,7 @@ export default function createOrganization() {
                 mode='time'
               />
               <RNDateTimePicker
-                display='compact'
+                display='clock'
                 collapsable={false}
                 onChange={(event, selectedDate) =>
                   handleTime(event, selectedDate, false)
@@ -109,7 +141,7 @@ export default function createOrganization() {
                   <Ionicons name='business-outline' {...props} />
                 )}
               >
-                Create Organization
+                <ButtonText>Create Organization</ButtonText>
               </Button>
             </Form.Trigger>
           </Form>

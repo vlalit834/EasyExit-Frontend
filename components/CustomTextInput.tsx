@@ -13,12 +13,11 @@ export default function CustomTextInput(props: TextInputProps) {
         w={'100%'}
         backgroundColor={'$blue1Light'}
         placeholderTextColor={'$blue1Dark'}
+        secureTextEntry={props.secureTextEntry ?? false}
         // borderColor={'$blue1Dark'}
         size={'$5'}
         marginBottom='$2'
-        keyboardType={
-          props.keyboardType !== '' ? props.keyboardType : 'default'
-        }
+        keyboardType={props.keyboardType ?? 'default'}
       />
     </View>
   );

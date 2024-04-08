@@ -19,6 +19,7 @@ import {
 } from 'expo-image-picker';
 import { Heading } from '@/tamagui.config';
 import CustomTextInput from '@/components/CustomTextInput';
+import { router } from 'expo-router';
 
 export default function index() {
   const [profileImg, setProfileImg] = React.useState<string>('');
@@ -65,7 +66,7 @@ export default function index() {
     (async () => {
       try {
         const imgUrl = await AsyncStorage.getItem('profileImgUrl');
-        if (imgUrl) setProfileImg(imgUrl);
+        setProfileImg(imgUrl ?? '');
       } catch (err) {
         console.log(err);
       }
@@ -105,9 +106,13 @@ export default function index() {
             placeholder='Password'
             id='password'
             onChangeText={setPassword}
+            secureTextEntry={true}
           />
-          <Select defaultValue='hone'></Select>
-          <Button w={'100%'} h={'$5'}>
+          <Select defaultValue='Select'></Select>
+          <Button w={'100%'} h={'$5'} onPress={() => {
+            router.setParams({ name, email, password, profileImg });
+            router.push('/createOrganization');
+          }}>
             <ButtonText>Register</ButtonText>
           </Button>
         </View>

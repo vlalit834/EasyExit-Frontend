@@ -1,7 +1,10 @@
+import { KeyboardTypeOptions } from "react-native";
+
 export interface TextInputProps {
   value: string;
-  id: string;
-  onChangeText: function;
-  placeholder: string;
-  keyboardType?: any;
+  id?: string;
+  onChangeText: (text: string) => void;
+  placeholder?: string;
+  keyboardType?: KeyboardTypeOptions;
+  secureTextEntry?: boolean;
 }
