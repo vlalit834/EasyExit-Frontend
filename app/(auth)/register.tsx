@@ -6,9 +6,10 @@ import {
 } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Button, ButtonText, Select } from 'tamagui';
+import { View, Button, ButtonText, Select, Adapt, Sheet, Label, RadioGroup, YStack, XStack } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { Check, ChevronDown } from '@tamagui/lucide-icons';
 
 import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
 import Avatar from '@/components/Avatar';
@@ -20,6 +21,7 @@ import {
 import { Heading } from '@/tamagui.config';
 import CustomTextInput from '@/components/CustomTextInput';
 import { router } from 'expo-router';
+import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 
 export default function index() {
   const [profileImg, setProfileImg] = React.useState<string>('');
@@ -27,6 +29,7 @@ export default function index() {
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [error, setError] = React.useState<boolean>(false);
+  const [role, setRole] = React.useState<string>('Admin');
 
   const pickImage = async () => {
     if (!profileImg.length) {
@@ -97,18 +100,33 @@ export default function index() {
           <CustomTextInput
             value={email}
             placeholder='Email'
-            id='email'
+            id='register-email'
             onChangeText={setEmail}
             keyboardType='email-address'
           />
           <CustomTextInput
             value={password}
             placeholder='Password'
-            id='password'
+            id='register-password'
             onChangeText={setPassword}
             secureTextEntry={true}
           />
-          <Select defaultValue='Select'></Select>
+          <Label>Select Role</Label>
+          <RadioGroup
+            aria-labelledby='Select one item'
+            name='form'
+            value={role}
+            onValueChange={setRole}
+          >
+            <YStack width={300} alignItems='center' gap='$2'>
+              <RadioGroupItemWithLabel size='$4' value='Admin' label='Admin' />
+              <RadioGroupItemWithLabel
+                size='$4'
+                value='Peoples'
+                label='Peoples'
+              />
+            </YStack>
+          </RadioGroup>
           <Button
             w={'100%'}
             h={'$5'}

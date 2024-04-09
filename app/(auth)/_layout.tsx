@@ -27,7 +27,7 @@ export default function AuthLayout() {
     <TamaguiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <Theme name='blue'>
+          <Theme name='blue' inverse>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name='index' />
               <Stack.Screen name='register' />

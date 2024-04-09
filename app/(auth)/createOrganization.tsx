@@ -19,6 +19,7 @@ import RNDateTimePicker, {
   DateTimePickerAndroid,
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+import CustomTextInput from '@/components/CustomTextInput';
 
 export default function createOrganization() {
   const [organizationName, setOrganizationName] = React.useState<string>('');
@@ -77,7 +78,7 @@ export default function createOrganization() {
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: '#fbfdff' }}>
+    <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View h={'100%'} w={'100%'} jc='flex-start' p={'$4'} ai='center'>
           <Heading>Create Organization</Heading>
@@ -85,17 +86,17 @@ export default function createOrganization() {
             <Avatar imageUri={organizationLogo} />
           : <Ionicons name='business' size={120} onPress={pickImage} />}
           <Form onSubmit={handleSubmit}>
-            <Label color={'$backgroundFocus'} htmlFor='name'>
+            <Label htmlFor='name'>
               Organization Name
             </Label>
-            <Input
+            <CustomTextInput
               id='name'
               placeholder='Organization Name'
               value={organizationName}
               onChangeText={setOrganizationName}
             />
             {error && <H6 color='red'>Organization name is required</H6>}
-            <Label color={'$backgroundHover'}>Unrestricted Timing</Label>
+            <Label>Unrestricted Timing</Label>
             <XStack>
               <RNDateTimePicker
                 display='clock'
@@ -107,7 +108,7 @@ export default function createOrganization() {
                 mode='time'
               />
               <RNDateTimePicker
-                display='compact'
+                display='clock'
                 collapsable={false}
                 onChange={(event, selectedDate) =>
                   handleTime(event, selectedDate, false)

@@ -5,7 +5,6 @@ export default function CustomTextInput(props: TextInputProps) {
   return (
     <View w={'100%'}>
       <Input
-        themeInverse={true}
         id={props.id}
         placeholder={props.placeholder}
         value={props.value}
