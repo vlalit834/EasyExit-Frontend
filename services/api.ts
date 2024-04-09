@@ -18,10 +18,8 @@ export const getSearchResults = async (
     const response = await axios.get(
       `${process.env.EXPO_PUBLIC_BACKEND_URL}/organization?name=${encodeURIComponent(searchString)}`,
     );
-    console.log(response);
 
     const res: Response200<SearchResultsData[]> = response.data;
-    console.log(res);
     return res.data;
   } catch (err) {
     console.log(err.message);

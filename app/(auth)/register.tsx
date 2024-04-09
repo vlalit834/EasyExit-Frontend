@@ -23,6 +23,7 @@ import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 import CustomSelect from '@/components/CustomSelect';
 import { useQuery } from '@tanstack/react-query';
 import { getSearchResults } from '@/services/api';
+import useDebounce from '@/hooks/useDebounce';
 
 export default function index() {
   const [profileImg, setProfileImg] = React.useState<string>('');
@@ -32,11 +33,13 @@ export default function index() {
   const [error, setError] = React.useState<boolean>(false);
   const [role, setRole] = React.useState<string>('Admin');
   const [searchString, setSearchString] = React.useState<string>('');
+  const debouncedString = useDebounce(searchString);
 
   const { data = [], isLoading } = useQuery({
-    queryKey: ['search', searchString],
-    queryFn: () => getSearchResults(searchString),
-    enabled: searchString.length > 3,
+    queryKey: ['search', debouncedString],
+    queryFn: () => getSearchResults(debouncedString),
+    enabled: debouncedString.length >= 3,
+    retry: false
   });
 
   const pickImage = async () => {
@@ -125,6 +128,7 @@ export default function index() {
             name='form'
             value={role}
             onValueChange={setRole}
+            mb='$4'
           >
             <YStack width={300} alignItems='center' gap='$2'>
               <RadioGroupItemWithLabel size='$4' value='Admin' label='Admin' />

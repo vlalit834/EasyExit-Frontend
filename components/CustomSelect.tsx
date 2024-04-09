@@ -2,12 +2,13 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { Select, Adapt, Sheet, Input, Spinner } from 'tamagui';
 import { CustomSelectProps } from '@/interfaces/CustomSelect.d';
-import useDebounce from '@/hooks/useDebounce';
 
 export default function CustomSelect(props: CustomSelectProps) {
+  
+
   return (
     <Select defaultValue=''>
-      <Select.Trigger width={400} borderColor={'black'} color={'black'}>
+      <Select.Trigger width={400} borderColor={'$blue6Light'} color={'black'}>
         <Select.Value color={'black'} placeholder={props.placeholder ?? ''} />
       </Select.Trigger>
 
@@ -48,16 +49,17 @@ export default function CustomSelect(props: CustomSelectProps) {
             />
             {props.isLoading ?
               <Spinner color='$blue10' size='large' />
-            : React.useMemo(() => {
-                props.data.map(item => (
-                  <Select.Item index={2} key={2} value={item.id}>
+            :
+                props.data.map(item => {
+                  console.log(item);
+                  return (
+                  <Select.Item index={2} key={item.id} value={item.id}>
                     <Select.ItemText>{item.name}</Select.ItemText>
                     <Select.ItemIndicator marginLeft='auto'>
                       <Ionicons name='checkmark-outline' />
                     </Select.ItemIndicator>
                   </Select.Item>
-                ));
-              }, [props.data])
+                )})
             }
           </Select.Group>
         </Select.Viewport>
