@@ -1,4 +1,4 @@
-import { KeyboardTypeOptions } from "react-native";
+import { KeyboardTypeOptions } from 'react-native';
 
 export interface TextInputProps {
   value: string;
@@ -7,4 +7,10 @@ export interface TextInputProps {
   placeholder?: string;
   keyboardType?: KeyboardTypeOptions;
   secureTextEntry?: boolean;
+}
+
+export interface loginData {
+  email: string;
+  password: string;
+  role: string;
 }

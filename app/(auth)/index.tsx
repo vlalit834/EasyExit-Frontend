@@ -1,25 +1,68 @@
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Button, ButtonText, Text } from 'tamagui';
+import {
+  View,
+  Button,
+  ButtonText,
+  Text,
+  RadioGroup,
+  Label,
+  YStack,
+} from 'tamagui';
 import CustomTextInput from '@/components/CustomTextInput';
+import { useMutation } from '@tanstack/react-query';
 import { Link, router } from 'expo-router';
-import { Image } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+
+import { LoginApi } from '@/services/api';
+import { loginData } from '@/interfaces/Auth';
+import { ActivityIndicator, Image, ToastAndroid } from 'react-native';
+import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 import { Heading } from '@/tamagui.config';
 
 export default function Login() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [role, setRole] = useState<string>('admin');
+  const [error, setError] = React.useState<boolean>(false);
+  const loginMutation = useMutation({
+    mutationFn: LoginApi,
+  });
 
-  const handleLogin = () => {
-    if (email && password) {
-      setIsLoggedIn(true);
+  const handleLogin = async () => {
+    const emailTrimmed: string = email.trim();
+    const passwordTrimmed: string = password.trim();
+
+    if (!emailTrimmed && !passwordTrimmed) {
+      setError(true);
+    } else {
+      try {
+        const loginData: loginData = {
+          email: emailTrimmed,
+          password: passwordTrimmed,
+          role: role,
+        };
+        await loginMutation.mutateAsync(loginData);
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
-  const handleRegister = () => {
-    router.push('/register');
-  };
+  React.useEffect(() => {
+    if (loginMutation.isSuccess) {
+      (async () => {
+        const response = loginMutation.data;
+        await SecureStore.setItemAsync('token', response.token);
+        await SecureStore.setItemAsync('role', role);
+        router.replace('/home');
+      })();
+    }
+    if (loginMutation.isError) {
+      const error = JSON.parse(loginMutation.error.message);
+      ToastAndroid.show(error.message, ToastAndroid.SHORT);
+    }
+  }, [loginMutation.isSuccess, loginMutation.isError]);
 
   return (
     <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
@@ -46,24 +89,45 @@ export default function Login() {
           id='password'
           onChangeText={setPassword}
         />
-        <Button w={'100%'} h={'$5'} onPress={handleLogin}>
-          <ButtonText>Login</ButtonText>
-        </Button>
-        {!isLoggedIn && (
-          <View mt='$4' flexDirection='row' mb='$2'>
-            <Text col={'black'}>If not registered, </Text>
-            <Link href={'/register'}>
-              <Text col='$blue5Dark'>Register</Text>
-            </Link>
-          </View>
-        )}
-        <View>
-          <Button marginBottom='$2' onPress={() => router.push('/register')}>
-            <ButtonText>Go to Register</ButtonText>
+        <Label textAlign='left'>Select Role</Label>
+        <RadioGroup
+          aria-labelledby='Select one item'
+          name='form'
+          value={role}
+          onValueChange={setRole}
+        >
+          <YStack width={300} alignItems='center' gap='$2'>
+            <RadioGroupItemWithLabel size='$4' value='admin' label='Admin' />
+            <RadioGroupItemWithLabel size='$4' value='peoples' label='People' />
+            <RadioGroupItemWithLabel
+              size='$4'
+              value='manager'
+              label='Manager'
+            />
+            <RadioGroupItemWithLabel
+              size='$4'
+              value='checker'
+              label='Checker'
+            />
+          </YStack>
+        </RadioGroup>
+        {loginMutation.isPending ?
+          <ActivityIndicator />
+        : <Button w={'100%'} h={'$5'} onPress={handleLogin}>
+            <ButtonText>Login</ButtonText>
           </Button>
-          <Button onPress={() => router.push('/createOrganization')}>
-            <ButtonText>Go to Create Organization</ButtonText>
-          </Button>
+        }
+        <View mt='$2' flexDirection='row'>
+          <Text>If not registered, </Text>
+          <Link
+            href={'/register'}
+            style={{
+              color: '#0e294b',
+              fontWeight: 'bold',
+            }}
+          >
+            {'Register'}
+          </Link>
         </View>
       </View>
     </SafeAreaView>
