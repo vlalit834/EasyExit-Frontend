@@ -7,7 +7,12 @@ import {
   PermissionStatus,
 } from 'expo-image-picker';
 import React from 'react';
-import { Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  Linking,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Form, H6, Input, Label, View, XStack } from 'tamagui';
 import RNDateTimePicker, {
@@ -30,7 +35,15 @@ export default function createOrganization() {
         Alert.alert(
           'Permission Denied',
           'We need Camera Roll permission to upload images',
-          [{ text: 'OK', style: 'cancel' }],
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Go to Settings',
+              onPress: () => {
+                Linking.openSettings();
+              },
+            },
+          ],
         );
       } else {
         const result = await launchImageLibraryAsync();

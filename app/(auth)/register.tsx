@@ -109,10 +109,14 @@ export default function index() {
             secureTextEntry={true}
           />
           <Select defaultValue='Select'></Select>
-          <Button w={'100%'} h={'$5'} onPress={() => {
-            router.setParams({ name, email, password, profileImg });
-            router.push('/createOrganization');
-          }}>
+          <Button
+            w={'100%'}
+            h={'$5'}
+            onPress={() => {
+              router.setParams({ name, email, password, profileImg });
+              router.push('/createOrganization');
+            }}
+          >
             <ButtonText>Register</ButtonText>
           </Button>
         </View>
