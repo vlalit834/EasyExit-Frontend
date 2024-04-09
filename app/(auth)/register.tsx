@@ -6,11 +6,9 @@ import {
 } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Button, ButtonText, Select, Adapt, Sheet, Label, RadioGroup, YStack, XStack } from 'tamagui';
+import { View, Button, ButtonText, Label, RadioGroup, YStack } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { Check, ChevronDown } from '@tamagui/lucide-icons';
-
 import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
 import Avatar from '@/components/Avatar';
 import {
@@ -22,6 +20,9 @@ import { Heading } from '@/tamagui.config';
 import CustomTextInput from '@/components/CustomTextInput';
 import { router } from 'expo-router';
 import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
+import CustomSelect from '@/components/CustomSelect';
+import { useQuery } from '@tanstack/react-query';
+import { getSearchResults } from '@/services/api';
 
 export default function index() {
   const [profileImg, setProfileImg] = React.useState<string>('');
@@ -30,6 +31,13 @@ export default function index() {
   const [password, setPassword] = React.useState<string>('');
   const [error, setError] = React.useState<boolean>(false);
   const [role, setRole] = React.useState<string>('Admin');
+  const [searchString, setSearchString] = React.useState<string>('');
+
+  const { data = [], isLoading } = useQuery({
+    queryKey: ['search', searchString],
+    queryFn: () => getSearchResults(searchString),
+    enabled: searchString.length > 3,
+  });
 
   const pickImage = async () => {
     if (!profileImg.length) {
@@ -127,6 +135,16 @@ export default function index() {
               />
             </YStack>
           </RadioGroup>
+          {role === 'Peoples' && (
+            <CustomSelect
+              data={data}
+              isLoading={isLoading}
+              value={searchString}
+              setValue={setSearchString}
+              title='Select Organization'
+              placeholder='Select your organization'
+            />
+          )}
           <Button
             w={'100%'}
             h={'$5'}

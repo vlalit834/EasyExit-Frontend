@@ -16,6 +16,7 @@ export default function CustomTextInput(props: TextInputProps) {
         // borderColor={'$blue1Dark'}
         size={'$5'}
         marginBottom='$2'
+        cursorColor={'black'}
         keyboardType={props.keyboardType ?? 'default'}
       />
     </View>

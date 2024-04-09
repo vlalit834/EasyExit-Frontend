@@ -1,19 +1,22 @@
-{/* <Select  defaultValue='Admin'>
-            <Select.Trigger width={400} borderColor={'black'} color={'black'}>
-              <Select.Value color={'black'} placeholder='Search...' />
-            </Select.Trigger>
+import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { Select, Adapt, Sheet, Input, Spinner } from 'tamagui';
+import { CustomSelectProps } from '@/interfaces/CustomSelect.d';
+import useDebounce from '@/hooks/useDebounce';
 
-            <Adapt when="sm" platform="touch">
+export default function CustomSelect(props: CustomSelectProps) {
+  return (
+    <Select defaultValue=''>
+      <Select.Trigger width={400} borderColor={'black'} color={'black'}>
+        <Select.Value color={'black'} placeholder={props.placeholder ?? ''} />
+      </Select.Trigger>
+
+      <Adapt when='sm' platform='touch'>
         <Sheet
           native={true}
-          modal
+          modal={false}
           dismissOnSnapToBottom
-          animationConfig={{
-            type: 'spring',
-            damping: 20,
-            mass: 1.2,
-            stiffness: 250,
-          }}
+          animation={'bouncy'}
         >
           <Sheet.Frame>
             <Sheet.ScrollView>
@@ -21,30 +24,44 @@
             </Sheet.ScrollView>
           </Sheet.Frame>
           <Sheet.Overlay
-            animation="lazy"
+            animation='lazy'
             enterStyle={{ opacity: 0 }}
             exitStyle={{ opacity: 0 }}
           />
         </Sheet>
       </Adapt>
 
-            <Select.Content zIndex={2000}>
-              <Select.Viewport width={100}>
-                <Select.Group>
-                  <Select.Label>Role</Select.Label>
-                  <Select.Item  index={1} key={1} value={'People'}>
-                    <Select.ItemText>{'People'}</Select.ItemText>
+      <Select.Content zIndex={20}>
+        <Select.Viewport width={100}>
+          <Select.Group>
+            <Select.Label textAlign='center' fontSize={'$6'}>
+              {props.title}
+            </Select.Label>
+            <Input
+              value={props.value}
+              onChangeText={props.setValue}
+              m='$4'
+              placeholder='Search...'
+              backgroundColor={'$blue1Light'}
+              placeholderTextColor={'$blue1Dark'}
+              cursorColor={'black'}
+            />
+            {props.isLoading ?
+              <Spinner color='$blue10' size='large' />
+            : React.useMemo(() => {
+                props.data.map(item => (
+                  <Select.Item index={2} key={2} value={item.id}>
+                    <Select.ItemText>{item.name}</Select.ItemText>
                     <Select.ItemIndicator marginLeft='auto'>
-                      <Ionicons name='checkbox-outline'/>
+                      <Ionicons name='checkmark-outline' />
                     </Select.ItemIndicator>
                   </Select.Item>
-                  <Select.Item index={2} key={2} value={'Admin'}>
-                    <Select.ItemText>{'Admin'}</Select.ItemText>
-                    <Select.ItemIndicator marginLeft='auto'>
-                      {/* <Check size={16} /> */}
-                    </Select.ItemIndicator>
-                  </Select.Item>
-                </Select.Group>
-              </Select.Viewport>
-            </Select.Content>
-          </Select> */}
+                ));
+              }, [props.data])
+            }
+          </Select.Group>
+        </Select.Viewport>
+      </Select.Content>
+    </Select>
+  );
+}
