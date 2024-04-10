@@ -31,7 +31,7 @@ export default function index() {
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [error, setError] = React.useState<boolean>(false);
-  const [role, setRole] = React.useState<string>('Admin');
+  const [role, setRole] = React.useState<string>('admin');
   const [searchString, setSearchString] = React.useState<string>('');
   const debouncedString = useDebounce(searchString);
 
@@ -90,9 +90,9 @@ export default function index() {
   return (
     <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View px='$4' ai='center'>
+        <View px='$4' mt='$6' ai='center'>
           <Heading>Hello! Register to Get Started</Heading>
-          <View ai='center' marginBottom='$5' marginTop='$2'>
+          <View ai='center' marginBottom='$6' marginTop='$3'>
             {profileImg ?
               <Avatar imageUri={profileImg} />
             : <Ionicons
@@ -122,24 +122,31 @@ export default function index() {
             onChangeText={setPassword}
             secureTextEntry={true}
           />
-          <Label>Select Role</Label>
+          <Label ml='$2' mb='$1' unstyled mt='$1'>
+            Select Role
+          </Label>
           <RadioGroup
             aria-labelledby='Select one item'
             name='form'
             value={role}
             onValueChange={setRole}
-            mb='$4'
+            mb='$3'
+            w={'100%'}
+            borderColor={'$blue6Light'}
+            borderWidth={1}
+            paddingLeft='$3'
+            borderRadius={'$4'}
           >
-            <YStack width={300} alignItems='center' gap='$2'>
+            <YStack width={300} alignItems='center' gap='$1'>
               <RadioGroupItemWithLabel size='$4' value='Admin' label='Admin' />
               <RadioGroupItemWithLabel
                 size='$4'
-                value='Peoples'
-                label='Peoples'
+                value='peoples'
+                label='People'
               />
             </YStack>
           </RadioGroup>
-          {role === 'Peoples' && (
+          {role === 'peoples' && (
             <CustomSelect
               data={data}
               isLoading={isLoading}
@@ -150,6 +157,8 @@ export default function index() {
             />
           )}
           <Button
+            mt='$2'
+            themeInverse
             w={'100%'}
             h={'$5'}
             onPress={() => {
@@ -157,7 +166,9 @@ export default function index() {
               router.push('/createOrganization');
             }}
           >
-            <ButtonText>Register</ButtonText>
+            <ButtonText>
+              {role === 'peoples' ? 'Register' : 'Continue'}
+            </ButtonText>
           </Button>
         </View>
       </TouchableWithoutFeedback>

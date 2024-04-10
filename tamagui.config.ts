@@ -53,7 +53,7 @@ export const Subtitle = styled(Text, {
 export const Heading = styled(Text, {
   color: '$blue1Dark',
   fontSize: '$8',
-  marginBottom: '$4',
+  marginBottom: '$2',
   textAlign: 'center'
 });
 

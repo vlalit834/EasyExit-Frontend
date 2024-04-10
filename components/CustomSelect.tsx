@@ -1,6 +1,6 @@
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { Select, Adapt, Sheet, Input, Spinner } from 'tamagui';
+import { Select, Adapt, Sheet, Input, Spinner, View } from 'tamagui';
 import { CustomSelectProps } from '@/interfaces/CustomSelect.d';
 
 export default function CustomSelect(props: CustomSelectProps) {
@@ -12,25 +12,25 @@ export default function CustomSelect(props: CustomSelectProps) {
         <Select.Value color={'black'} placeholder={props.placeholder ?? ''} />
       </Select.Trigger>
 
-      <Adapt when='sm' platform='touch'>
-        <Sheet
-          native={true}
-          modal={false}
-          dismissOnSnapToBottom
-          animation={'bouncy'}
-        >
-          <Sheet.Frame>
-            <Sheet.ScrollView>
-              <Adapt.Contents />
-            </Sheet.ScrollView>
-          </Sheet.Frame>
-          <Sheet.Overlay
-            animation='lazy'
-            enterStyle={{ opacity: 0 }}
-            exitStyle={{ opacity: 0 }}
-          />
-        </Sheet>
-      </Adapt>
+        <Adapt when='sm' platform='touch'>
+          <Sheet
+            native={true}
+            modal={false}
+            dismissOnSnapToBottom
+            animation={'bouncy'}
+          >
+            <Sheet.Frame>
+              <Sheet.ScrollView>
+                <Adapt.Contents />
+              </Sheet.ScrollView>
+            </Sheet.Frame>
+            <Sheet.Overlay
+              animation='lazy'
+              enterStyle={{ opacity: 0 }}
+              exitStyle={{ opacity: 0 }}
+            />
+          </Sheet>
+        </Adapt>
 
       <Select.Content zIndex={20}>
         <Select.Viewport width={100}>

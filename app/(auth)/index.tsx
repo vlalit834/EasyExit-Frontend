@@ -66,7 +66,7 @@ export default function Login() {
 
   return (
     <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
-      <View ai='center' marginBottom='$2' marginTop='$8'>
+      <View ai='center' marginBottom='$1' marginTop='$4'>
         <Image
           source={require('@/assets/adaptive-icon.png')}
           style={{ width: 150, height: 150 }}
@@ -74,6 +74,9 @@ export default function Login() {
       </View>
       <View>
         <Heading>Welcome to Easy Exit </Heading>
+        <Text textAlign='center' mb='$3'>
+          Login To Continue
+        </Text>
       </View>
       <View px='$4' ai='center'>
         <CustomTextInput
@@ -89,14 +92,21 @@ export default function Login() {
           id='password'
           onChangeText={setPassword}
         />
-        <Label textAlign='left'>Select Role</Label>
+        <Label ml='$2' mb='$1' unstyled mt='$1'>
+          Select Role
+        </Label>
         <RadioGroup
+          borderColor={'$blue6Light'}
+          borderWidth={1}
+          borderRadius={'$4'}
           aria-labelledby='Select one item'
           name='form'
+          paddingLeft='$3'
           value={role}
           onValueChange={setRole}
+          mb='$3'
         >
-          <YStack width={300} alignItems='center' gap='$2'>
+          <YStack width={300} alignItems='center' gap='$1'>
             <RadioGroupItemWithLabel size='$4' value='admin' label='Admin' />
             <RadioGroupItemWithLabel size='$4' value='peoples' label='People' />
             <RadioGroupItemWithLabel
@@ -112,12 +122,14 @@ export default function Login() {
           </YStack>
         </RadioGroup>
         {loginMutation.isPending ?
-          <ActivityIndicator />
-        : <Button w={'100%'} h={'$5'} onPress={handleLogin}>
+          <Button w={'100%'} h={'$5'} disabled themeInverse>
+            <ActivityIndicator />
+          </Button>
+        : <Button w={'100%'} h={'$5'} onPress={handleLogin} themeInverse>
             <ButtonText>Login</ButtonText>
           </Button>
         }
-        <View mt='$2' flexDirection='row'>
+        <View mt='$4' flexDirection='row' jc='center'>
           <Text>If not registered, </Text>
           <Link
             href={'/register'}
