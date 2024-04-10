@@ -5,6 +5,7 @@ export default function CustomTextInput(props: TextInputProps) {
   return (
     <View w={'100%'}>
       <Input
+        editable={props.editable ?? true}
         id={props.id}
         placeholder={props.placeholder}
         value={props.value}

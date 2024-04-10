@@ -11,12 +11,12 @@ import {
   Alert,
   Keyboard,
   Linking,
+  Pressable,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Form, H6, Input, Label, View, XStack } from 'tamagui';
+import { Button, Form, H6, Label, View, XStack } from 'tamagui';
 import RNDateTimePicker, {
-  DateTimePickerAndroid,
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import CustomTextInput from '@/components/CustomTextInput';
@@ -25,8 +25,10 @@ export default function createOrganization() {
   const [organizationName, setOrganizationName] = React.useState<string>('');
   const [organizationLogo, setOrganizationLogo] = React.useState<string>('');
   const [error, setError] = React.useState<boolean>(false);
-  const [startTime, setStartTime] = React.useState<Date>(new Date());
-  const [endTime, setEndTime] = React.useState<Date>(new Date());
+  const [startTime, setStartTime] = React.useState<Date>(null);
+  const [endTime, setEndTime] = React.useState<Date>(null);
+  const [showStartPicker, setStartPicker] = React.useState<boolean>(false);
+  const [showEndPicker, setEndPicker] = React.useState<boolean>(false);
 
   const pickImage = async () => {
     if (!organizationLogo.length) {
@@ -69,6 +71,8 @@ export default function createOrganization() {
     } else {
       setEndTime(currentDate);
     }
+    setStartPicker(false);
+    setEndPicker(false);
   };
 
   const handleSubmit = async () => {
@@ -86,11 +90,8 @@ export default function createOrganization() {
             <Avatar imageUri={organizationLogo} />
           : <Ionicons name='business' size={120} onPress={pickImage} />}
           <Form onSubmit={handleSubmit}>
-            <Label htmlFor='name'>
-              Organization Name
-            </Label>
+            <Label>Organization Name</Label>
             <CustomTextInput
-              id='name'
               placeholder='Organization Name'
               value={organizationName}
               onChangeText={setOrganizationName}
@@ -98,24 +99,42 @@ export default function createOrganization() {
             {error && <H6 color='red'>Organization name is required</H6>}
             <Label>Unrestricted Timing</Label>
             <XStack>
-              <RNDateTimePicker
-                display='clock'
-                collapsable={false}
-                onChange={(event, selectedDate) =>
-                  handleTime(event, selectedDate)
-                }
-                value={startTime}
-                mode='time'
-              />
-              <RNDateTimePicker
-                display='clock'
-                collapsable={false}
-                onChange={(event, selectedDate) =>
-                  handleTime(event, selectedDate, false)
-                }
-                value={endTime}
-                mode='time'
-              />
+              {showStartPicker && (
+                <RNDateTimePicker
+                  display='clock'
+                  is24Hour={false}
+                  onChange={(event, selectedDate) =>
+                    handleTime(event, selectedDate)
+                  }
+                  value={startTime === null ? new Date() : startTime}
+                  mode='time'
+                />
+              )}
+              <Pressable onPress={() => setStartPicker(val => !val)}>
+                <CustomTextInput
+                  editable={false}
+                  placeholder='12:04:09 PM'
+                  value={startTime?.toLocaleTimeString() ?? ''}
+                />
+              </Pressable>
+              {showEndPicker && (
+                <RNDateTimePicker
+                  display='clock'
+                  is24Hour={false}
+                  onChange={(event, selectedDate) =>
+                    handleTime(event, selectedDate, false)
+                  }
+                  value={endTime === null ? new Date() : endTime}
+                  mode='time'
+                />
+              )}
+              <Pressable onPress={() => setEndPicker(val => !val)}>
+                <CustomTextInput
+                  editable={false}
+                  placeholder='12:04:09 PM'
+                  value={endTime?.toLocaleTimeString() ?? ''}
+                />
+              </Pressable>
             </XStack>
             <Form.Trigger asChild>
               <Button

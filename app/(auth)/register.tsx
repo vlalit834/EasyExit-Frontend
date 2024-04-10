@@ -39,7 +39,7 @@ export default function index() {
     queryKey: ['search', debouncedString],
     queryFn: () => getSearchResults(debouncedString),
     enabled: debouncedString.length >= 3,
-    retry: false
+    retry: false,
   });
 
   const pickImage = async () => {

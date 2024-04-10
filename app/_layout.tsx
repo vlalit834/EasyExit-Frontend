@@ -28,7 +28,7 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <Theme name='blue' inverse>
-            <Slot/>
+            <Slot />
           </Theme>
         </GestureHandlerRootView>
       </QueryClientProvider>
