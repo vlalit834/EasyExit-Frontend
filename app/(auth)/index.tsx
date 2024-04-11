@@ -8,6 +8,7 @@ import {
   RadioGroup,
   Label,
   YStack,
+  H6,
 } from 'tamagui';
 import CustomTextInput from '@/components/CustomTextInput';
 import { useMutation } from '@tanstack/react-query';
@@ -15,7 +16,7 @@ import { Link, router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
 import { LoginApi } from '@/services/api';
-import { loginData } from '@/interfaces/Auth';
+import { LoginData, Role } from '@/interfaces/Auth';
 import { ActivityIndicator, Image, ToastAndroid } from 'react-native';
 import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 import { Heading } from '@/tamagui.config';
@@ -23,10 +24,19 @@ import { Heading } from '@/tamagui.config';
 export default function Login() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [role, setRole] = useState<string>('admin');
+  const [role, setRole] = useState<Role>(Role.ADMIN);
   const [error, setError] = React.useState<boolean>(false);
   const loginMutation = useMutation({
+    mutationKey: ['login'],
     mutationFn: LoginApi,
+    async onSuccess(data, variables) {
+      await SecureStore.setItemAsync('token', data.token);
+      await SecureStore.setItemAsync('role', variables.role);
+      router.replace('/home');
+    },
+    onError(error) {
+      ToastAndroid.show(JSON.parse(error.message).message, ToastAndroid.SHORT);
+    },
   });
 
   const handleLogin = async () => {
@@ -37,7 +47,7 @@ export default function Login() {
       setError(true);
     } else {
       try {
-        const loginData: loginData = {
+        const loginData: LoginData = {
           email: emailTrimmed,
           password: passwordTrimmed,
           role: role,
@@ -48,21 +58,6 @@ export default function Login() {
       }
     }
   };
-
-  React.useEffect(() => {
-    if (loginMutation.isSuccess) {
-      (async () => {
-        const response = loginMutation.data;
-        await SecureStore.setItemAsync('token', response.token);
-        await SecureStore.setItemAsync('role', role);
-        router.replace('/home');
-      })();
-    }
-    if (loginMutation.isError) {
-      const error = JSON.parse(loginMutation.error.message);
-      ToastAndroid.show(error.message, ToastAndroid.SHORT);
-    }
-  }, [loginMutation.isSuccess, loginMutation.isError]);
 
   return (
     <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
@@ -86,12 +81,14 @@ export default function Login() {
           onChangeText={setEmail}
           keyboardType='email-address'
         />
+        {error && email.trim() === '' && <H6>Email is Required</H6>}
         <CustomTextInput
           value={password}
           placeholder='Password'
           id='password'
           onChangeText={setPassword}
         />
+        {error && password.trim() === '' && <H6>Password is Required</H6>}
         <Label ml='$2' mb='$1' unstyled mt='$1'>
           Select Role
         </Label>
@@ -103,43 +100,58 @@ export default function Login() {
           name='form'
           paddingLeft='$3'
           value={role}
-          onValueChange={setRole}
+          onValueChange={value => {
+            setRole(value as Role);
+          }}
           mb='$3'
         >
           <YStack width={300} alignItems='center' gap='$1'>
-            <RadioGroupItemWithLabel size='$4' value='admin' label='Admin' />
-            <RadioGroupItemWithLabel size='$4' value='peoples' label='People' />
             <RadioGroupItemWithLabel
               size='$4'
-              value='manager'
+              value={Role.ADMIN}
+              label='Admin'
+            />
+            <RadioGroupItemWithLabel
+              size='$4'
+              value={Role.USER}
+              label='People'
+            />
+            <RadioGroupItemWithLabel
+              size='$4'
+              value={Role.MANAGER}
               label='Manager'
             />
             <RadioGroupItemWithLabel
               size='$4'
-              value='checker'
+              value={Role.CHECKER}
               label='Checker'
             />
           </YStack>
         </RadioGroup>
-        {loginMutation.isPending ?
-          <Button w={'100%'} h={'$5'} disabled themeInverse>
+        <Button
+          w={'100%'}
+          h={'$5'}
+          disabled={loginMutation.isPending}
+          onPress={handleLogin}
+          themeInverse
+        >
+          {loginMutation.isPending ?
             <ActivityIndicator />
-          </Button>
-        : <Button w={'100%'} h={'$5'} onPress={handleLogin} themeInverse>
-            <ButtonText>Login</ButtonText>
-          </Button>
-        }
+          : <ButtonText>Login</ButtonText>}
+        </Button>
         <View mt='$4' flexDirection='row' jc='center'>
-          <Text>If not registered, </Text>
-          <Link
-            href={'/register'}
-            style={{
-              color: '#0e294b',
-              fontWeight: 'bold',
-            }}
-          >
-            {'Register'}
-          </Link>
+          <Text>
+            If not registered,{' '}
+            <Link
+              href={'/register'}
+              style={{
+                color: '#0e294b',
+                fontWeight: 'bold',
+              }}
+            >
+              Register
+            </Link>
+          </Text>
         </View>
       </View>
     </SafeAreaView>

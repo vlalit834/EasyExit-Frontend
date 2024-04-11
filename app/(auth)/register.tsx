@@ -3,14 +3,23 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Linking,
+  ToastAndroid,
 } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Button, ButtonText, Label, RadioGroup, YStack } from 'tamagui';
+import {
+  View,
+  Button,
+  ButtonText,
+  Label,
+  RadioGroup,
+  YStack,
+  H6,
+} from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
 import Avatar from '@/components/Avatar';
+import * as SecureStore from 'expo-secure-store';
 import {
   PermissionStatus,
   launchImageLibraryAsync,
@@ -21,17 +30,19 @@ import CustomTextInput from '@/components/CustomTextInput';
 import { router } from 'expo-router';
 import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 import CustomSelect from '@/components/CustomSelect';
-import { useQuery } from '@tanstack/react-query';
-import { getSearchResults } from '@/services/api';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getSearchResults, studentRegister } from '@/services/api';
 import useDebounce from '@/hooks/useDebounce';
+import { Role } from '@/interfaces/Auth';
 
 export default function index() {
-  const [profileImg, setProfileImg] = React.useState<string>('');
+  const [profileImg, setProfileImg] = React.useState<string | null>(null);
   const [name, setName] = React.useState<string>('');
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
+  const [organizationId, setOrganizationId] = React.useState<string>(null);
   const [error, setError] = React.useState<boolean>(false);
-  const [role, setRole] = React.useState<string>('admin');
+  const [role, setRole] = React.useState<Role>(Role.ADMIN);
   const [searchString, setSearchString] = React.useState<string>('');
   const debouncedString = useDebounce(searchString);
 
@@ -42,36 +53,87 @@ export default function index() {
     retry: false,
   });
 
-  const pickImage = async () => {
-    if (!profileImg.length) {
-      const { status } = await requestMediaLibraryPermissionsAsync();
+  const { mutateAsync } = useMutation({
+    mutationKey: [Role.USER, 'register'],
+    mutationFn: studentRegister,
+    async onSuccess(data) {
+      await SecureStore.setItemAsync('token', data.token);
+      await SecureStore.setItemAsync('role', Role.USER);
+      await AsyncStorage.setItem('name',name);
+      await AsyncStorage.setItem('email',email);
+      router.replace('/home');
+    },
+    onError(error) {
+      ToastAndroid.show(JSON.parse(error.message).message, ToastAndroid.SHORT);
+    },
+  });
 
-      if (status !== PermissionStatus.GRANTED) {
-        Alert.alert(
-          'Permission Denied',
-          'Camera Roll permission is required to upload images',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'Open Settings',
-              onPress: () => {
-                Linking.openSettings();
-              },
-            },
-          ],
-        );
+  const handleNext = async () => {
+    const trimmedName: string = name.trim();
+    const trimmedEmail: string = email.trim();
+    const trimmedPassword: string = password.trim();
+
+    if (trimmedName === '' || trimmedEmail === '' || trimmedPassword === '') {
+      setError(true);
+      return;
+    }
+    setError(false);
+    if (!profileImg) {
+      ToastAndroid.show('Please select a profile image', ToastAndroid.SHORT);
+      return;
+    }
+    try {
+      if (role === Role.ADMIN) {
+        router.push({
+          pathname: '/createOrganization',
+          params: {
+            name: trimmedName,
+            email: trimmedEmail,
+            password: trimmedPassword,
+            profileImg
+          },
+        });
       } else {
-        const result = await launchImageLibraryAsync();
+        const data = {
+          name: trimmedName,
+          email: trimmedEmail,
+          password: trimmedPassword,
+          organizationId,
+          profileImg
+        };
+        await mutateAsync(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-        if (!result.canceled) {
-          const imgUrl = await convertLocalImageUrlToBase64Url(
-            result.assets[0].uri,
-          );
-          setProfileImg(imgUrl);
-        }
+  const pickImage = async () => {
+    if (profileImg) return;
+    const { status } = await requestMediaLibraryPermissionsAsync();
+
+    if (status !== PermissionStatus.GRANTED) {
+      Alert.alert(
+        'Permission Denied',
+        'Camera Roll permission is required to upload images',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              Linking.openSettings();
+            },
+          },
+        ],
+      );
+    } else {
+      const result = await launchImageLibraryAsync();
+
+      if (!result.canceled) {
+        setProfileImg(result.assets[0].uri);
       }
     }
   };
@@ -80,7 +142,7 @@ export default function index() {
     (async () => {
       try {
         const imgUrl = await AsyncStorage.getItem('profileImgUrl');
-        setProfileImg(imgUrl ?? '');
+        setProfileImg(imgUrl);
       } catch (err) {
         console.log(err);
       }
@@ -108,6 +170,7 @@ export default function index() {
             id='name'
             onChangeText={setName}
           />
+          {error && name.trim() === '' && <H6>Name is required</H6>}
           <CustomTextInput
             value={email}
             placeholder='Email'
@@ -115,6 +178,7 @@ export default function index() {
             onChangeText={setEmail}
             keyboardType='email-address'
           />
+          {error && email.trim() === '' && <H6>Email is required</H6>}
           <CustomTextInput
             value={password}
             placeholder='Password'
@@ -122,6 +186,7 @@ export default function index() {
             onChangeText={setPassword}
             secureTextEntry={true}
           />
+          {error && password.trim() === '' && <H6>Password is required</H6>}
           <Label ml='$2' mb='$1' unstyled mt='$1'>
             Select Role
           </Label>
@@ -129,7 +194,7 @@ export default function index() {
             aria-labelledby='Select one item'
             name='form'
             value={role}
-            onValueChange={setRole}
+            onValueChange={value => setRole(value as Role)}
             mb='$3'
             w={'100%'}
             borderColor={'$blue6Light'}
@@ -138,36 +203,33 @@ export default function index() {
             borderRadius={'$4'}
           >
             <YStack width={300} alignItems='center' gap='$1'>
-              <RadioGroupItemWithLabel size='$4' value='Admin' label='Admin' />
               <RadioGroupItemWithLabel
                 size='$4'
-                value='peoples'
+                value={Role.ADMIN}
+                label='Admin'
+              />
+              <RadioGroupItemWithLabel
+                size='$4'
+                value={Role.USER}
                 label='People'
               />
             </YStack>
           </RadioGroup>
-          {role === 'peoples' && (
+          {role === Role.USER && (
             <CustomSelect
+              value={organizationId}
+              onValueChange={setOrganizationId}
               data={data}
               isLoading={isLoading}
-              value={searchString}
-              setValue={setSearchString}
+              searchValue={searchString}
+              setSearchValue={setSearchString}
               title='Select Organization'
               placeholder='Select your organization'
             />
           )}
-          <Button
-            mt='$2'
-            themeInverse
-            w={'100%'}
-            h={'$5'}
-            onPress={() => {
-              router.setParams({ name, email, password, profileImg });
-              router.push('/createOrganization');
-            }}
-          >
+          <Button mt='$2' themeInverse w={'100%'} h={'$5'} onPress={handleNext}>
             <ButtonText>
-              {role === 'peoples' ? 'Register' : 'Continue'}
+              {role === Role.USER ? 'Register' : 'Continue'}
             </ButtonText>
           </Button>
         </View>

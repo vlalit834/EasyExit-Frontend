@@ -10,8 +10,34 @@ export interface TextInputProps {
   editable?: boolean;
 }
 
-export interface loginData {
+export interface LoginData {
   email: string;
   password: string;
-  role: string;
+  role: Role;
+}
+
+export interface StudentRegisterData {
+  name: string;
+  email: string;
+  password: string;
+  organizationId: string;
+  profileImg?: string;
+}
+
+export interface AdminRegisterData {
+  name: string;
+  email: string;
+  password: string;
+  organizationName: string;
+  organizationLogo?: string;
+  profileImg?: string;
+  startTime?: Date;
+  endTime?: Date;
+}
+
+export enum Role {
+  ADMIN = 'admin',
+  USER = 'peoples',
+  MANAGER = 'manager',
+  CHECKER = 'checker',
 }

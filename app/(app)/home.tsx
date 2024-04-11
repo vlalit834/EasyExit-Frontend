@@ -9,7 +9,11 @@ export default function Home() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
+        <ImageBackground
+          source={backgroundImage}
+          style={styles.backgroundImage}
+          resizeMode='cover'
+        >
           <View style={styles.overlay}>
             <Text style={styles.title}>My Outpass</Text>
             <Text style={styles.subtitle}>Manage Your Outpass:</Text>
@@ -17,13 +21,19 @@ export default function Home() {
         </ImageBackground>
         <View style={styles.buttonsContainer}>
           <View style={[styles.buttonRow, { marginTop: 40 }]}>
-            <Button style={styles.button} onPress={() => alert('Generate Outpass')}>
+            <Button
+              style={styles.button}
+              onPress={() => alert('Generate Outpass')}
+            >
               <View style={styles.buttonContent}>
                 <Ionicons name='add-circle-outline' size={32} color='#ADD8E6' />
                 <ButtonText style={styles.buttonText}>Generate</ButtonText>
               </View>
             </Button>
-            <Button style={styles.button} onPress={() => alert('Pending Outpass')}>
+            <Button
+              style={styles.button}
+              onPress={() => alert('Pending Outpass')}
+            >
               <View style={styles.buttonContent}>
                 <Ionicons name='hourglass' size={32} color='#FFC107' />
                 <ButtonText style={styles.buttonText}>Pending</ButtonText>
@@ -31,13 +41,23 @@ export default function Home() {
             </Button>
           </View>
           <View style={[styles.buttonRow, { marginTop: 20 }]}>
-            <Button style={styles.button} onPress={() => alert('Approved Outpass')}>
+            <Button
+              style={styles.button}
+              onPress={() => alert('Approved Outpass')}
+            >
               <View style={styles.buttonContent}>
-                <Ionicons name='checkmark-circle-outline' size={32} color='green' />
+                <Ionicons
+                  name='checkmark-circle-outline'
+                  size={32}
+                  color='green'
+                />
                 <ButtonText style={styles.buttonText}>Approved</ButtonText>
               </View>
             </Button>
-            <Button style={styles.button} onPress={() => alert('Denied Outpass')}>
+            <Button
+              style={styles.button}
+              onPress={() => alert('Denied Outpass')}
+            >
               <View style={styles.buttonContent}>
                 <Ionicons name='close-circle' size={32} color='red' />
                 <ButtonText style={styles.buttonText}>Denied</ButtonText>
@@ -63,8 +83,8 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)', 
-    height: '70%', 
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    height: '70%',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -84,14 +104,14 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'center', 
-    alignItems: 'center', 
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 20,
   },
   button: {
-    width: '50%', 
-    height: 120, 
-    marginHorizontal: 10, 
+    width: '50%',
+    height: 120,
+    marginHorizontal: 10,
   },
   buttonContent: {
     flexDirection: 'row',

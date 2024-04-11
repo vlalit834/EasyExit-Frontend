@@ -1,5 +1,6 @@
 import { Response200 } from '@/interfaces/api';
-import { loginData } from '@/interfaces/Auth';
+import { AdminRegisterData, LoginData, StudentRegisterData } from '@/interfaces/Auth';
+import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
 import axios from 'axios';
 
 export type SearchResultsData = {
@@ -7,7 +8,7 @@ export type SearchResultsData = {
   name: string;
 };
 
-export type LoginResultsData = {
+export type TokenData = {
   token: string;
 };
 
@@ -27,28 +28,70 @@ export const getSearchResults = async (
   }
 };
 
-export const LoginApi = async (data: loginData): Promise<LoginResultsData> => {
+export const LoginApi = async (data: LoginData): Promise<TokenData> => {
   try {
     const response = await axios.post(
       `${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/login`,
       data,
-      {
-        headers: { 'Content-Type': 'application/json' },
-      },
     );
 
     if (response.status === 200) {
-      const res: Response200<LoginResultsData> = response.data;
+      const res: Response200<TokenData> = response.data;
       return res.data;
     }
   } catch (error) {
-    if (
-      error.response.status == 400 ||
-      error.response.status == 401 ||
-      error.response.status == 500 ||
-      error.response.status == 404
-    ) {
+    if ([400, 401, 404, 500].includes(error.response.status)) {
       throw new Error(JSON.stringify(error.response.data));
-    } else throw new Error('sdfdsfs');
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const studentRegister = async (
+  data: StudentRegisterData,
+): Promise<TokenData> => {
+  try {
+    const formData = new FormData();
+    for (const key in data) {
+      if (key === 'profileImg' && data[key])
+        formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
+      else formData.append(key, data[key]);
+    }
+    const response = await axios.post(
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/peoples`,
+      data,
+    );
+
+    const res: Response200<TokenData> = response.data;
+    return res.data;
+  } catch (error) {
+    if (error.response.status === 400 || error.response.status === 500) {
+      throw new Error(JSON.stringify(error.response.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const adminRegister = async (
+  data: AdminRegisterData,
+): Promise<TokenData> => {
+  try {
+    const formData = new FormData();
+    for (const key in data) {
+      if (['organizationLogo','profileImg'].includes(key) && data[key])
+        formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
+      else if ((key === 'startTime' || key === 'endTime') && data[key]) formData.append(key,data[key].toISOString());
+      else formData.append(key, data[key]);
+    }
+    const response = await axios.post(
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/admin`,
+      data,
+    );
+
+    const res: Response200<TokenData> =  response.data;
+    return res.data;
+    
+  } catch (error) {
+    if (error.response.status === 400 || error.response.status === 500) {
+      throw new Error(JSON.stringify(error.response.data));
+    } else throw new Error('Unknown Error');
   }
 };
