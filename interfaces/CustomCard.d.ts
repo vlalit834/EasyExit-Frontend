@@ -1,10 +1,12 @@
+import { TokenStatus } from './TokenStatus';
+
 export interface CustomCardProps {
   value?: string;
-  status?: 'approved' | 'expired' | 'rejected';
+  status?: TokenStatus;
   heading?: string;
   startTime?: Date;
   endTime?: Date;
-  approvedBy?: string;
+  acceptedBy?: string;
   phoneNumber?: number;
   reason?: string;
 }

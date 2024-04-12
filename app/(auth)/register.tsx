@@ -137,16 +137,8 @@ export default function Register() {
               <Avatar imageUri={profileImg} />
             : <Ionicons name='person-circle-outline' size={120} onPress={pickImage} />}
           </View>
-          <CustomTextInput
-            value={name}
-            placeholder='Name'
-            id='name'
-            onChangeText={setName}
-            error={error}
-          />
-          {error && name.trim() === '' && (
-            <H6 col={'$red10'}>Name is required</H6>
-          )}
+          <CustomTextInput value={name} placeholder='Name' id='name' onChangeText={setName} error={error} />
+          {error && name.trim() === '' && <H6 col={'$red10'}>Name is required</H6>}
           <CustomTextInput
             value={email}
             placeholder='Email'
@@ -155,9 +147,7 @@ export default function Register() {
             keyboardType='email-address'
             error={error}
           />
-          {error && email.trim() === '' && (
-            <H6 col={'$red10'}>Email is required</H6>
-          )}
+          {error && email.trim() === '' && <H6 col={'$red10'}>Email is required</H6>}
           <CustomTextInput
             value={password}
             placeholder='Password'
@@ -166,9 +156,7 @@ export default function Register() {
             secureTextEntry={true}
             error={error}
           />
-          {error && password.trim() === '' && (
-            <H6 col={'$red10'}>Password is required</H6>
-          )}
+          {error && password.trim() === '' && <H6 col={'$red10'}>Password is required</H6>}
           <Label ml='$2' mb='$1' unstyled mt='$1'>
             Select Role
           </Label>
@@ -204,10 +192,7 @@ export default function Register() {
           <Button mt='$2' themeInverse w={'100%'} h={'$5'} onPress={handleNext} disabled={isPending}>
             {isPending ?
               <ActivityIndicator color={'#0e294b'} />
-            : <ButtonText>
-                {role === Role.USER ? 'Register' : 'Continue'}
-              </ButtonText>
-            }
+            : <ButtonText>{role === Role.USER ? 'Register' : 'Continue'}</ButtonText>}
           </Button>
         </View>
       </TouchableWithoutFeedback>

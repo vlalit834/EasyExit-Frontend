@@ -30,7 +30,7 @@ export default function RootLayout() {
   React.useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
-    } 
+    }
   }, [loaded]);
 
   if (!loaded) return null;

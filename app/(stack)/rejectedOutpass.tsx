@@ -7,7 +7,7 @@ import CustomCard from '@/components/CustomCard';
 
 export default function RejectedOutpass() {
   const { data = [], isLoading } = useQuery({
-    queryKey: ['rejected','student','outpass'],
+    queryKey: ['rejected', 'student', 'outpass'],
     queryFn: rejectedStudentOutpass,
   });
 

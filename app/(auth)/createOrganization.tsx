@@ -25,9 +25,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CreateOrganization() {
   const [organizationName, setOrganizationName] = React.useState<string>('');
-  const [organizationLogo, setOrganizationLogo] = React.useState<string | null>(
-    null,
-  );
+  const [organizationLogo, setOrganizationLogo] = React.useState<string | null>(null);
   const [error, setError] = React.useState<boolean>(false);
   const [startTime, setStartTime] = React.useState<Date>(null);
   const [endTime, setEndTime] = React.useState<Date>(null);
@@ -55,18 +53,18 @@ export default function CreateOrganization() {
     if (organizationLogo) return;
     const { status } = await requestMediaLibraryPermissionsAsync();
 
-      if (status !== PermissionStatus.GRANTED) {
-        Alert.alert('Permission Denied', 'We need Camera Roll permission to upload images', [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Go to Settings',
-            onPress: () => {
-              Linking.openSettings();
-            },
+    if (status !== PermissionStatus.GRANTED) {
+      Alert.alert('Permission Denied', 'We need Camera Roll permission to upload images', [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Go to Settings',
+          onPress: () => {
+            Linking.openSettings();
           },
-        ]);
-      } else {
-        const result = await launchImageLibraryAsync();
+        },
+      ]);
+    } else {
+      const result = await launchImageLibraryAsync();
 
       if (!result.canceled) {
         setOrganizationLogo(result.assets[0].uri);
@@ -94,10 +92,7 @@ export default function CreateOrganization() {
     }
     setError(false);
     if (!organizationLogo) {
-      ToastAndroid.show(
-        'Please select an organization logo',
-        ToastAndroid.SHORT,
-      );
+      ToastAndroid.show('Please select an organization logo', ToastAndroid.SHORT);
       return;
     }
     try {
@@ -135,9 +130,7 @@ export default function CreateOrganization() {
               onChangeText={setOrganizationName}
               error={error}
             />
-            {error && organizationName.trim() === '' && (
-              <H6 col={'$red10'}>Organization name is required</H6>
-            )}
+            {error && organizationName.trim() === '' && <H6 col={'$red10'}>Organization name is required</H6>}
             <H6 mt='$3'>Unrestricted Timing</H6>
             <XStack jc='space-between' mb='$4'>
               {showStartPicker && (
@@ -149,10 +142,7 @@ export default function CreateOrganization() {
                   mode='time'
                 />
               )}
-              <Pressable
-                style={{ width: '48%' }}
-                onPress={() => setStartPicker(val => !val)}
-              >
+              <Pressable style={{ width: '48%' }} onPress={() => setStartPicker(val => !val)}>
                 <CustomTextInput
                   editable={false}
                   placeholder='10:00:00 AM'
@@ -168,10 +158,7 @@ export default function CreateOrganization() {
                   mode='time'
                 />
               )}
-              <Pressable
-                style={{ width: '48%' }}
-                onPress={() => setEndPicker(val => !val)}
-              >
+              <Pressable style={{ width: '48%' }} onPress={() => setEndPicker(val => !val)}>
                 <CustomTextInput
                   editable={false}
                   placeholder='06:00:00 PM'
@@ -184,9 +171,7 @@ export default function CreateOrganization() {
                 themeInverse
                 h='$5'
                 w={'100%'}
-                iconAfter={(props: any) => (
-                  <Ionicons name='business-outline' {...props} />
-                )}
+                iconAfter={(props: any) => <Ionicons name='business-outline' {...props} />}
               >
                 {isPending ?
                   <ActivityIndicator color={'#0e294b'} />
