@@ -1,5 +1,9 @@
 import { Response200 } from '@/interfaces/api';
-import { AdminRegisterData, LoginData, StudentRegisterData } from '@/interfaces/Auth';
+import {
+  AdminRegisterData,
+  LoginData,
+  StudentRegisterData,
+} from '@/interfaces/Auth';
 import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
 import axios from 'axios';
 
@@ -54,6 +58,7 @@ export const studentRegister = async (
     for (const key in data) {
       if (key === 'profileImg' && data[key])
         formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
+        // console.log(data[key]);
       else formData.append(key, data[key]);
     }
     const response = await axios.post(
@@ -76,9 +81,10 @@ export const adminRegister = async (
   try {
     const formData = new FormData();
     for (const key in data) {
-      if (['organizationLogo','profileImg'].includes(key) && data[key])
+      if (['organizationLogo', 'profileImg'].includes(key) && data[key])
         formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
-      else if ((key === 'startTime' || key === 'endTime') && data[key]) formData.append(key,data[key].toISOString());
+      else if ((key === 'startTime' || key === 'endTime') && data[key])
+        formData.append(key, data[key].toISOString());
       else formData.append(key, data[key]);
     }
     const response = await axios.post(
@@ -86,9 +92,8 @@ export const adminRegister = async (
       data,
     );
 
-    const res: Response200<TokenData> =  response.data;
+    const res: Response200<TokenData> = response.data;
     return res.data;
-    
   } catch (error) {
     if (error.response.status === 400 || error.response.status === 500) {
       throw new Error(JSON.stringify(error.response.data));

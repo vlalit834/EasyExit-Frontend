@@ -8,6 +8,7 @@ import {
 } from 'expo-image-picker';
 import React from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Keyboard,
   Linking,
@@ -16,7 +17,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Form, H6, Label, View, XStack } from 'tamagui';
+import { Button, ButtonText, Form, H6, Label, View, XStack } from 'tamagui';
 import * as SecureStore from 'expo-secure-store';
 import RNDateTimePicker, {
   DateTimePickerEvent,
@@ -24,60 +25,65 @@ import RNDateTimePicker, {
 import CustomTextInput from '@/components/CustomTextInput';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
-import { Role } from '@/interfaces/Auth';
+import { Role } from '@/interfaces/Role';
 import { adminRegister } from '@/services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function createOrganization() {
   const [organizationName, setOrganizationName] = React.useState<string>('');
-  const [organizationLogo, setOrganizationLogo] = React.useState<string | null>(null);
+  const [organizationLogo, setOrganizationLogo] = React.useState<string | null>(
+    null,
+  );
   const [error, setError] = React.useState<boolean>(false);
   const [startTime, setStartTime] = React.useState<Date>(null);
   const [endTime, setEndTime] = React.useState<Date>(null);
   const [showStartPicker, setStartPicker] = React.useState<boolean>(false);
   const [showEndPicker, setEndPicker] = React.useState<boolean>(false);
 
-  const { name, email, password, profileImg } = useLocalSearchParams<Record<string,string>>();
+  const { name, email, password, profileImg } =
+    useLocalSearchParams<Record<string, string>>();
 
-  const { mutateAsync } = useMutation({
-    mutationKey: [Role.ADMIN,'register'],
+  const { mutateAsync, isPending } = useMutation({
+    mutationKey: [Role.ADMIN, 'register'],
     mutationFn: adminRegister,
     async onSuccess(data) {
       await SecureStore.setItemAsync('token', data.token);
       await SecureStore.setItemAsync('role', Role.ADMIN);
-      await AsyncStorage.setItem('name',name);
-      await AsyncStorage.setItem('email',email);
+      await AsyncStorage.setItem('name', name);
+      await AsyncStorage.setItem('email', email);
       router.replace('/home');
     },
     onError(error) {
       ToastAndroid.show(JSON.parse(error.message).message, ToastAndroid.SHORT);
     },
-  })
+  });
 
   const pickImage = async () => {
-    if (!organizationLogo.length) {
-      const { status } = await requestMediaLibraryPermissionsAsync();
+    if (organizationLogo) return;
+    const { status } = await requestMediaLibraryPermissionsAsync();
 
-      if (status !== PermissionStatus.GRANTED) {
-        Alert.alert(
-          'Permission Denied',
-          'We need Camera Roll permission to upload images',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Go to Settings',
-              onPress: () => {
-                Linking.openSettings();
-              },
+    if (status !== PermissionStatus.GRANTED) {
+      Alert.alert(
+        'Permission Denied',
+        'Camera Roll permission is required to upload images',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              Linking.openSettings();
             },
-          ],
-        );
-      } else {
-        const result = await launchImageLibraryAsync();
+          },
+        ],
+      );
+    } else {
+      const result = await launchImageLibraryAsync();
 
-        if (!result.canceled) {
-          setOrganizationLogo(result.assets[0].uri);
-        }
+      if (!result.canceled) {
+        setOrganizationLogo(result.assets[0].uri);
       }
     }
   };
@@ -102,40 +108,56 @@ export default function createOrganization() {
     const trimmedOrganizationName: string = organizationName.trim();
     if (trimmedOrganizationName === '') {
       setError(true);
+      return;
     }
     setError(false);
-    const data = {
-      name,
-      email,
-      password,
-      organizationName: trimmedOrganizationName,
-      organizationLogo,
-      profileImg,
-      startTime,
-      endTime
-    };
-    mutateAsync(data);
-
+    if (!organizationLogo) {
+      ToastAndroid.show(
+        'Please select an organization logo',
+        ToastAndroid.SHORT,
+      );
+      return;
+    }
+    try {
+      const data = {
+        name,
+        email,
+        password,
+        organizationName: trimmedOrganizationName,
+        organizationLogo,
+        profileImg,
+        startTime,
+        endTime,
+      };
+      await mutateAsync(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View h={'100%'} w={'100%'} jc='flex-start' p={'$4'} ai='center'>
+        <View mt='$6' ai='center' px='$4'>
           <Heading>Create Organization</Heading>
-          {organizationLogo ?
-            <Avatar imageUri={organizationLogo} />
-          : <Ionicons name='business' size={120} onPress={pickImage} />}
-          <Form onSubmit={handleSubmit}>
-            <Label>Organization Name</Label>
+          <View ai='center' marginBottom='$6' marginTop='$3'>
+            {organizationLogo ?
+              <Avatar imageUri={organizationLogo} />
+            : <Ionicons name='business' size={120} onPress={pickImage} />}
+          </View>
+          <Form w={'100%'} onSubmit={handleSubmit}>
+            <H6 mt='$4'>Organization Name</H6>
             <CustomTextInput
               placeholder='Organization Name'
               value={organizationName}
               onChangeText={setOrganizationName}
+              error={error}
             />
-            {error && <H6 color='red'>Organization name is required</H6>}
-            <Label>Unrestricted Timing</Label>
-            <XStack>
+            {error && organizationName.trim() === '' && (
+              <H6 col={'$red10'}>Organization name is required</H6>
+            )}
+            <H6 mt='$3'>Unrestricted Timing</H6>
+            <XStack jc='space-between' mb='$4'>
               {showStartPicker && (
                 <RNDateTimePicker
                   display='clock'
@@ -147,10 +169,13 @@ export default function createOrganization() {
                   mode='time'
                 />
               )}
-              <Pressable onPress={() => setStartPicker(val => !val)}>
+              <Pressable
+                style={{ width: '48%' }}
+                onPress={() => setStartPicker(val => !val)}
+              >
                 <CustomTextInput
                   editable={false}
-                  placeholder='12:04:09 PM'
+                  placeholder='10:00:00 AM'
                   value={startTime?.toLocaleTimeString() ?? ''}
                 />
               </Pressable>
@@ -165,21 +190,29 @@ export default function createOrganization() {
                   mode='time'
                 />
               )}
-              <Pressable onPress={() => setEndPicker(val => !val)}>
+              <Pressable
+                style={{ width: '48%' }}
+                onPress={() => setEndPicker(val => !val)}
+              >
                 <CustomTextInput
                   editable={false}
-                  placeholder='12:04:09 PM'
+                  placeholder='06:00:00 PM'
                   value={endTime?.toLocaleTimeString() ?? ''}
                 />
               </Pressable>
             </XStack>
             <Form.Trigger asChild>
               <Button
+                themeInverse
+                h='$5'
+                w={'100%'}
                 iconAfter={(props: any) => (
                   <Ionicons name='business-outline' {...props} />
                 )}
               >
-                Create Organization
+                {isPending ?
+                  <ActivityIndicator />
+                : <ButtonText>Create Organization</ButtonText>}
               </Button>
             </Form.Trigger>
           </Form>

@@ -4,6 +4,7 @@ import {
   Keyboard,
   Linking,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,15 +28,15 @@ import {
 } from 'expo-image-picker';
 import { Heading } from '@/tamagui.config';
 import CustomTextInput from '@/components/CustomTextInput';
-import { router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 import CustomSelect from '@/components/CustomSelect';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getSearchResults, studentRegister } from '@/services/api';
 import useDebounce from '@/hooks/useDebounce';
-import { Role } from '@/interfaces/Auth';
+import { Role } from '@/interfaces/Role';
 
-export default function index() {
+export default function Register() {
   const [profileImg, setProfileImg] = React.useState<string | null>(null);
   const [name, setName] = React.useState<string>('');
   const [email, setEmail] = React.useState<string>('');
@@ -53,14 +54,14 @@ export default function index() {
     retry: false,
   });
 
-  const { mutateAsync } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: [Role.USER, 'register'],
     mutationFn: studentRegister,
     async onSuccess(data) {
       await SecureStore.setItemAsync('token', data.token);
       await SecureStore.setItemAsync('role', Role.USER);
-      await AsyncStorage.setItem('name',name);
-      await AsyncStorage.setItem('email',email);
+      await AsyncStorage.setItem('name', name);
+      await AsyncStorage.setItem('email', email);
       router.replace('/home');
     },
     onError(error) {
@@ -90,7 +91,7 @@ export default function index() {
             name: trimmedName,
             email: trimmedEmail,
             password: trimmedPassword,
-            profileImg
+            profileImg,
           },
         });
       } else {
@@ -99,7 +100,7 @@ export default function index() {
           email: trimmedEmail,
           password: trimmedPassword,
           organizationId,
-          profileImg
+          profileImg,
         };
         await mutateAsync(data);
       }
@@ -169,24 +170,33 @@ export default function index() {
             placeholder='Name'
             id='name'
             onChangeText={setName}
+            error={error}
           />
-          {error && name.trim() === '' && <H6>Name is required</H6>}
+          {error && name.trim() === '' && (
+            <H6 col={'$red10'}>Name is required</H6>
+          )}
           <CustomTextInput
             value={email}
             placeholder='Email'
             id='register-email'
             onChangeText={setEmail}
             keyboardType='email-address'
+            error={error}
           />
-          {error && email.trim() === '' && <H6>Email is required</H6>}
+          {error && email.trim() === '' && (
+            <H6 col={'$red10'}>Email is required</H6>
+          )}
           <CustomTextInput
             value={password}
             placeholder='Password'
             id='register-password'
             onChangeText={setPassword}
             secureTextEntry={true}
+            error={error}
           />
-          {error && password.trim() === '' && <H6>Password is required</H6>}
+          {error && password.trim() === '' && (
+            <H6 col={'$red10'}>Password is required</H6>
+          )}
           <Label ml='$2' mb='$1' unstyled mt='$1'>
             Select Role
           </Label>
@@ -227,10 +237,13 @@ export default function index() {
               placeholder='Select your organization'
             />
           )}
-          <Button mt='$2' themeInverse w={'100%'} h={'$5'} onPress={handleNext}>
-            <ButtonText>
-              {role === Role.USER ? 'Register' : 'Continue'}
-            </ButtonText>
+          <Button mt='$2' themeInverse w={'100%'} h={'$5'} onPress={handleNext} disabled={isPending}>
+            {isPending ?
+              <ActivityIndicator />
+            : <ButtonText>
+                {role === Role.USER ? 'Register' : 'Continue'}
+              </ButtonText>
+            }
           </Button>
         </View>
       </TouchableWithoutFeedback>
