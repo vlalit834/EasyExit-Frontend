@@ -5,7 +5,7 @@ export function RadioGroupItemWithLabel(props: RadioGroupItemWithLabelProps) {
     const id = `radiogroup-${props.value}`
     return (
       <XStack width={300} alignItems="center" gap="$4">
-        <RadioGroup.Item value={props.value} id={id} size={props.size}>
+        <RadioGroup.Item value={props.value} size={props.size}>
           <RadioGroup.Indicator />
         </RadioGroup.Item>
   

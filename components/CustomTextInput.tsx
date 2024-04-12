@@ -12,11 +12,11 @@ export default function CustomTextInput(props: TextInputProps) {
         onChangeText={props.onChangeText}
         w={'100%'}
         backgroundColor={'$blue1Light'}
-        placeholderTextColor={'$blue1Dark'}
+        placeholderTextColor={'$grey'}
         secureTextEntry={props.secureTextEntry ?? false}
-        // borderColor={'$blue1Dark'}
+        borderColor={props.error && !props.value ? '$red10' : '$blue6Light' }
         size={'$5'}
-        marginBottom='$2'
+        marginTop='$2'
         cursorColor={'black'}
         keyboardType={props.keyboardType ?? 'default'}
       />

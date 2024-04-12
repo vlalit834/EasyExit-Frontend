@@ -7,7 +7,8 @@ import { Link, router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
 import { LoginApi } from '@/services/api';
-import { LoginData, Role } from '@/interfaces/Auth';
+import { LoginData } from '@/interfaces/Auth';
+import { Role } from '@/interfaces/Role';
 import { ActivityIndicator, Image, ToastAndroid } from 'react-native';
 import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 import { Heading } from '@/tamagui.config';
@@ -68,10 +69,17 @@ export default function Login() {
           id='email'
           onChangeText={setEmail}
           keyboardType='email-address'
+          error={error}
         />
-        {error && email.trim() === '' && <H6>Email is Required</H6>}
-        <CustomTextInput value={password} placeholder='Password' id='password' onChangeText={setPassword} />
-        {error && password.trim() === '' && <H6>Password is Required</H6>}
+        {error && email.trim() === '' && <H6 col={'$red10'}>Email is Required</H6>}
+        <CustomTextInput
+          value={password}
+          placeholder='Password'
+          id='password'
+          onChangeText={setPassword}
+          error={error}
+        />
+        {error && password.trim() === '' && <H6 col={'$red10'}>Password is Required</H6>}
         <Label ml='$2' mb='$1' unstyled mt='$1'>
           Select Role
         </Label>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { Select, Adapt, Sheet, Input, Spinner, View } from 'tamagui';
+import { Select, Adapt, Sheet, Input, Spinner } from 'tamagui';
 import { CustomSelectProps } from '@/interfaces/CustomSelect.d';
 
 export default function CustomSelect(props: CustomSelectProps) {

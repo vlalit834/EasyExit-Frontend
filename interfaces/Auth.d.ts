@@ -8,6 +8,7 @@ export interface TextInputProps {
   keyboardType?: KeyboardTypeOptions;
   secureTextEntry?: boolean;
   editable?: boolean;
+  error?: boolean;
 }
 
 export interface LoginData {
@@ -35,9 +36,3 @@ export interface AdminRegisterData {
   endTime?: Date;
 }
 
-export enum Role {
-  ADMIN = 'admin',
-  USER = 'peoples',
-  MANAGER = 'manager',
-  CHECKER = 'checker',
-}
