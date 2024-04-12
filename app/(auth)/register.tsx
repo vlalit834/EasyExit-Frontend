@@ -1,30 +1,12 @@
-import {
-  Alert,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Linking,
-  ToastAndroid,
-} from 'react-native';
+import { Alert, TouchableWithoutFeedback, Keyboard, Linking, ToastAndroid } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  View,
-  Button,
-  ButtonText,
-  Label,
-  RadioGroup,
-  YStack,
-  H6,
-} from 'tamagui';
+import { View, Button, ButtonText, Label, RadioGroup, YStack, H6 } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Avatar from '@/components/Avatar';
 import * as SecureStore from 'expo-secure-store';
-import {
-  PermissionStatus,
-  launchImageLibraryAsync,
-  requestMediaLibraryPermissionsAsync,
-} from 'expo-image-picker';
+import { PermissionStatus, launchImageLibraryAsync, requestMediaLibraryPermissionsAsync } from 'expo-image-picker';
 import { Heading } from '@/tamagui.config';
 import CustomTextInput from '@/components/CustomTextInput';
 import { router } from 'expo-router';
@@ -35,7 +17,7 @@ import { getSearchResults, studentRegister } from '@/services/api';
 import useDebounce from '@/hooks/useDebounce';
 import { Role } from '@/interfaces/Auth';
 
-export default function index() {
+export default function Register() {
   const [profileImg, setProfileImg] = React.useState<string | null>(null);
   const [name, setName] = React.useState<string>('');
   const [email, setEmail] = React.useState<string>('');
@@ -59,8 +41,8 @@ export default function index() {
     async onSuccess(data) {
       await SecureStore.setItemAsync('token', data.token);
       await SecureStore.setItemAsync('role', Role.USER);
-      await AsyncStorage.setItem('name',name);
-      await AsyncStorage.setItem('email',email);
+      await AsyncStorage.setItem('name', name);
+      await AsyncStorage.setItem('email', email);
       router.replace('/home');
     },
     onError(error) {
@@ -90,7 +72,7 @@ export default function index() {
             name: trimmedName,
             email: trimmedEmail,
             password: trimmedPassword,
-            profileImg
+            profileImg,
           },
         });
       } else {
@@ -99,7 +81,7 @@ export default function index() {
           email: trimmedEmail,
           password: trimmedPassword,
           organizationId,
-          profileImg
+          profileImg,
         };
         await mutateAsync(data);
       }
@@ -113,22 +95,18 @@ export default function index() {
     const { status } = await requestMediaLibraryPermissionsAsync();
 
     if (status !== PermissionStatus.GRANTED) {
-      Alert.alert(
-        'Permission Denied',
-        'Camera Roll permission is required to upload images',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
+      Alert.alert('Permission Denied', 'Camera Roll permission is required to upload images', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Open Settings',
+          onPress: () => {
+            Linking.openSettings();
           },
-          {
-            text: 'Open Settings',
-            onPress: () => {
-              Linking.openSettings();
-            },
-          },
-        ],
-      );
+        },
+      ]);
     } else {
       const result = await launchImageLibraryAsync();
 
@@ -157,19 +135,9 @@ export default function index() {
           <View ai='center' marginBottom='$6' marginTop='$3'>
             {profileImg ?
               <Avatar imageUri={profileImg} />
-            : <Ionicons
-                name='person-circle-outline'
-                size={120}
-                onPress={pickImage}
-              />
-            }
+            : <Ionicons name='person-circle-outline' size={120} onPress={pickImage} />}
           </View>
-          <CustomTextInput
-            value={name}
-            placeholder='Name'
-            id='name'
-            onChangeText={setName}
-          />
+          <CustomTextInput value={name} placeholder='Name' id='name' onChangeText={setName} />
           {error && name.trim() === '' && <H6>Name is required</H6>}
           <CustomTextInput
             value={email}
@@ -203,16 +171,8 @@ export default function index() {
             borderRadius={'$4'}
           >
             <YStack width={300} alignItems='center' gap='$1'>
-              <RadioGroupItemWithLabel
-                size='$4'
-                value={Role.ADMIN}
-                label='Admin'
-              />
-              <RadioGroupItemWithLabel
-                size='$4'
-                value={Role.USER}
-                label='People'
-              />
+              <RadioGroupItemWithLabel size='$4' value={Role.ADMIN} label='Admin' />
+              <RadioGroupItemWithLabel size='$4' value={Role.USER} label='People' />
             </YStack>
           </RadioGroup>
           {role === Role.USER && (
@@ -228,9 +188,7 @@ export default function index() {
             />
           )}
           <Button mt='$2' themeInverse w={'100%'} h={'$5'} onPress={handleNext}>
-            <ButtonText>
-              {role === Role.USER ? 'Register' : 'Continue'}
-            </ButtonText>
+            <ButtonText>{role === Role.USER ? 'Register' : 'Continue'}</ButtonText>
           </Button>
         </View>
       </TouchableWithoutFeedback>

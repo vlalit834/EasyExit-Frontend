@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  View,
-  Button,
-  ButtonText,
-  Text,
-  RadioGroup,
-  Label,
-  YStack,
-  H6,
-} from 'tamagui';
+import { View, Button, ButtonText, Text, RadioGroup, Label, YStack, H6 } from 'tamagui';
 import CustomTextInput from '@/components/CustomTextInput';
 import { useMutation } from '@tanstack/react-query';
 import { Link, router } from 'expo-router';
@@ -62,10 +53,7 @@ export default function Login() {
   return (
     <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
       <View ai='center' marginBottom='$1' marginTop='$4'>
-        <Image
-          source={require('@/assets/adaptive-icon.png')}
-          style={{ width: 150, height: 150 }}
-        />
+        <Image source={require('@/assets/adaptive-icon.png')} style={{ width: 150, height: 150 }} />
       </View>
       <View>
         <Heading>Welcome to Easy Exit </Heading>
@@ -82,12 +70,7 @@ export default function Login() {
           keyboardType='email-address'
         />
         {error && email.trim() === '' && <H6>Email is Required</H6>}
-        <CustomTextInput
-          value={password}
-          placeholder='Password'
-          id='password'
-          onChangeText={setPassword}
-        />
+        <CustomTextInput value={password} placeholder='Password' id='password' onChangeText={setPassword} />
         {error && password.trim() === '' && <H6>Password is Required</H6>}
         <Label ml='$2' mb='$1' unstyled mt='$1'>
           Select Role
@@ -106,35 +89,13 @@ export default function Login() {
           mb='$3'
         >
           <YStack width={300} alignItems='center' gap='$1'>
-            <RadioGroupItemWithLabel
-              size='$4'
-              value={Role.ADMIN}
-              label='Admin'
-            />
-            <RadioGroupItemWithLabel
-              size='$4'
-              value={Role.USER}
-              label='People'
-            />
-            <RadioGroupItemWithLabel
-              size='$4'
-              value={Role.MANAGER}
-              label='Manager'
-            />
-            <RadioGroupItemWithLabel
-              size='$4'
-              value={Role.CHECKER}
-              label='Checker'
-            />
+            <RadioGroupItemWithLabel size='$4' value={Role.ADMIN} label='Admin' />
+            <RadioGroupItemWithLabel size='$4' value={Role.USER} label='People' />
+            <RadioGroupItemWithLabel size='$4' value={Role.MANAGER} label='Manager' />
+            <RadioGroupItemWithLabel size='$4' value={Role.CHECKER} label='Checker' />
           </YStack>
         </RadioGroup>
-        <Button
-          w={'100%'}
-          h={'$5'}
-          disabled={loginMutation.isPending}
-          onPress={handleLogin}
-          themeInverse
-        >
+        <Button w={'100%'} h={'$5'} disabled={loginMutation.isPending} onPress={handleLogin} themeInverse>
           {loginMutation.isPending ?
             <ActivityIndicator />
           : <ButtonText>Login</ButtonText>}
