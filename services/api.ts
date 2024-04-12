@@ -1,24 +1,30 @@
 import { Response200 } from '@/interfaces/api';
-import {
-  AdminRegisterData,
-  LoginData,
-  StudentRegisterData,
-} from '@/interfaces/Auth';
+import { AdminRegisterData, LoginData, StudentRegisterData } from '@/interfaces/Auth';
 import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
 import axios from 'axios';
+import { getItemAsync } from 'expo-secure-store';
 
 export type SearchResultsData = {
   id: string;
   name: string;
 };
 
+export type OutpassResultsData = {
+  token: string;
+  reason?: string;
+  heading: string;
+  startTime: Date;
+  endTime: Date;
+  status: string;
+  acceptedBy: string;
+  phoneNumber: number;
+};
+
 export type TokenData = {
   token: string;
 };
 
-export const getSearchResults = async (
-  searchString: string,
-): Promise<SearchResultsData[]> => {
+export const getSearchResults = async (searchString: string): Promise<SearchResultsData[]> => {
   try {
     const response = await axios.get(
       `${process.env.EXPO_PUBLIC_BACKEND_URL}/organization?name=${encodeURIComponent(searchString)}`,
@@ -34,10 +40,7 @@ export const getSearchResults = async (
 
 export const LoginApi = async (data: LoginData): Promise<TokenData> => {
   try {
-    const response = await axios.post(
-      `${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/login`,
-      data,
-    );
+    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/login`, data);
 
     if (response.status === 200) {
       const res: Response200<TokenData> = response.data;
@@ -50,21 +53,15 @@ export const LoginApi = async (data: LoginData): Promise<TokenData> => {
   }
 };
 
-export const studentRegister = async (
-  data: StudentRegisterData,
-): Promise<TokenData> => {
+export const studentRegister = async (data: StudentRegisterData): Promise<TokenData> => {
   try {
     const formData = new FormData();
     for (const key in data) {
-      if (key === 'profileImg' && data[key])
-        formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
-        // console.log(data[key]);
+      if (key === 'profileImg' && data[key]) formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
+      // console.log(data[key]);
       else formData.append(key, data[key]);
     }
-    const response = await axios.post(
-      `${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/peoples`,
-      data,
-    );
+    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/peoples`, data);
 
     const res: Response200<TokenData> = response.data;
     return res.data;
@@ -75,27 +72,55 @@ export const studentRegister = async (
   }
 };
 
-export const adminRegister = async (
-  data: AdminRegisterData,
-): Promise<TokenData> => {
+export const adminRegister = async (data: AdminRegisterData): Promise<TokenData> => {
   try {
     const formData = new FormData();
     for (const key in data) {
       if (['organizationLogo', 'profileImg'].includes(key) && data[key])
         formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
-      else if ((key === 'startTime' || key === 'endTime') && data[key])
-        formData.append(key, data[key].toISOString());
+      else if ((key === 'startTime' || key === 'endTime') && data[key]) formData.append(key, data[key].toISOString());
       else formData.append(key, data[key]);
     }
-    const response = await axios.post(
-      `${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/admin`,
-      data,
-    );
+    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/admin`, data);
 
     const res: Response200<TokenData> = response.data;
     return res.data;
   } catch (error) {
     if (error.response.status === 400 || error.response.status === 500) {
+      throw new Error(JSON.stringify(error.response.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const approvedStudentOutpass = async (): Promise<OutpassResultsData[]> => {
+  try {
+    const token = getItemAsync('token');
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/user/approvedOutpass`,{
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    const res: Response200<OutpassResultsData[]> = response.data;
+    return res.data;
+  } catch (error) {
+    if (error.response.status === 500) {
+      throw new Error(JSON.stringify(error.response.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const rejectedStudentOutpass = async (): Promise<OutpassResultsData[]> => {
+  try {
+    const token = getItemAsync('token');
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/user/rejectedOutpass`,{
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    const res: Response200<OutpassResultsData[]> = response.data;
+    return res.data;
+  } catch (error) {
+    if (error.response.status === 500) {
       throw new Error(JSON.stringify(error.response.data));
     } else throw new Error('Unknown Error');
   }

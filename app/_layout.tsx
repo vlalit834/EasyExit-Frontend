@@ -6,8 +6,20 @@ import { queryClient } from '@/utils/queryClient';
 import { TamaguiProvider, Theme } from 'tamagui';
 import config from '@/tamagui.config';
 import { useFonts } from 'expo-font';
+import * as Notification from 'expo-notifications';
 
 SplashScreen.preventAutoHideAsync();
+
+Notification.setNotificationHandler({
+  async handleNotification(notification) {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      priority: Notification.AndroidNotificationPriority.HIGH,
+    };
+  },
+});
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -18,7 +30,7 @@ export default function RootLayout() {
   React.useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
-    }
+    } 
   }, [loaded]);
 
   if (!loaded) return null;

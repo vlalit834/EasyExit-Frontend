@@ -1,12 +1,21 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { getItem } from 'expo-secure-store';
+import { Role } from '@/interfaces/Role';
 
 export default function HomeLayout() {
+  const role = getItem('role');
+
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Tabs.Screen
         name='home'
+        redirect={role !== Role.USER}
         options={{
           title: 'Home',
           tabBarIcon({ focused, color, size }) {
@@ -23,7 +32,26 @@ export default function HomeLayout() {
           },
         }}
       />
-      <Tabs.Screen name='createOrganization' />
+      <Tabs.Screen
+        name='announcements'
+        redirect={role === Role.ADMIN}
+        options={{
+          title: 'Announcements',
+          tabBarIcon({ focused, color, size }) {
+            return <Ionicons name={focused ? 'notifications' : 'notifications-outline'} color={color} size={size} />;
+          },
+        }}
+      />
+      <Tabs.Screen
+        name='createAnnouncement'
+        redirect={role !== Role.ADMIN}
+        options={{
+          title: 'Create Announcement',
+          tabBarIcon({ focused, color, size }) {
+            return <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} color={color} size={size} />;
+          },
+        }}
+      />
     </Tabs>
   );
 }
