@@ -16,6 +16,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { getSearchResults, studentRegister } from '@/services/api';
 import useDebounce from '@/hooks/useDebounce';
 import { Role } from '@/interfaces/Role';
+import * as FileSystem from 'expo-file-system';
 
 export default function Register() {
   const [profileImg, setProfileImg] = React.useState<string | null>(null);
@@ -111,21 +112,20 @@ export default function Register() {
       const result = await launchImageLibraryAsync();
 
       if (!result.canceled) {
-        setProfileImg(result.assets[0].uri);
+        const documentDirectory = FileSystem.documentDirectory || `${FileSystem.cacheDirectory}document/`;
+        await FileSystem.makeDirectoryAsync(documentDirectory, { intermediates: true });
+
+        const filename = 'profileImg.jpeg';
+        const destinationFilePath = `${documentDirectory}${filename}`;
+
+        await FileSystem.moveAsync({
+          from: result.assets[0].uri,
+          to: destinationFilePath,
+        });
+        setProfileImg(destinationFilePath);
       }
     }
   };
-
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const imgUrl = await AsyncStorage.getItem('profileImgUrl');
-        setProfileImg(imgUrl);
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-  }, []);
 
   return (
     <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
@@ -191,7 +191,7 @@ export default function Register() {
           )}
           <Button mt='$2' themeInverse w={'100%'} h={'$5'} onPress={handleNext} disabled={isPending}>
             {isPending ?
-              <ActivityIndicator color={'#0e294b'} />
+              <ActivityIndicator />
             : <ButtonText>{role === Role.USER ? 'Register' : 'Continue'}</ButtonText>}
           </Button>
         </View>

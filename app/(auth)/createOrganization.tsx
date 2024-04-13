@@ -174,7 +174,7 @@ export default function CreateOrganization() {
                 iconAfter={(props: any) => <Ionicons name='business-outline' {...props} />}
               >
                 {isPending ?
-                  <ActivityIndicator color={'#0e294b'} />
+                  <ActivityIndicator />
                 : <ButtonText>Create Organization</ButtonText>}
               </Button>
             </Form.Trigger>

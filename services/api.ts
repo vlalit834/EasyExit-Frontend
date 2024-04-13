@@ -69,11 +69,16 @@ export const studentRegister = async (data: StudentRegisterData): Promise<TokenD
   try {
     const formData = new FormData();
     for (const key in data) {
-      if (key === 'profileImg' && data[key]) formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
-      // console.log(data[key]);
-      else formData.append(key, data[key]);
+      if (key === 'profileImg' && data[key]) {
+        formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
+      } else formData.append(key, data[key]);
     }
-    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/peoples`, data);
+
+    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/peoples`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
     const res: Response200<TokenData> = response.data;
     return res.data;
@@ -93,7 +98,11 @@ export const adminRegister = async (data: AdminRegisterData): Promise<TokenData>
       else if ((key === 'startTime' || key === 'endTime') && data[key]) formData.append(key, data[key].toISOString());
       else formData.append(key, data[key]);
     }
-    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/admin`, data);
+    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/register/admin`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
     const res: Response200<TokenData> = response.data;
     return res.data;
