@@ -42,7 +42,7 @@ export default function Home() {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
+    <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1, alignItems: 'center' }}>
       <View h='35%' w={'100%'}>
         <ImageBackground source={require('@/assets/images.jpeg')} style={{ flex: 1 }}>
           <View style={styles.overlay}>

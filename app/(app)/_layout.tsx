@@ -35,6 +35,15 @@ export default function HomeLayout() {
           }}
         />
         <Tabs.Screen
+          name='ManagerHome'
+          options={{
+            title: 'managerHome',
+            tabBarIcon({ focused, color, size }) {
+              return <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />;
+            },
+          }}
+        />
+        <Tabs.Screen
           name='profile'
           options={{
             title: 'Profile',
