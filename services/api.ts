@@ -1,4 +1,4 @@
-import { Response200 } from '@/interfaces/api';
+import { Response200, Response201 } from '@/interfaces/api';
 import { AdminRegisterData, LoginData, StudentRegisterData } from '@/interfaces/Auth';
 import { TokenStatus } from '@/interfaces/TokenStatus';
 import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
@@ -60,8 +60,8 @@ export const LoginApi = async (data: LoginData): Promise<TokenData> => {
       return res.data;
     }
   } catch (error) {
-    if ([400, 401, 404, 500].includes(error.response.status)) {
-      throw new Error(JSON.stringify(error.response.data));
+    if ([400, 401, 404, 500].includes(error.response?.status)) {
+      throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
 };
@@ -84,8 +84,8 @@ export const studentRegister = async (data: StudentRegisterData): Promise<TokenD
     const res: Response200<TokenData> = response.data;
     return res.data;
   } catch (error) {
-    if (error.response.status === 400 || error.response.status === 500) {
-      throw new Error(JSON.stringify(error.response.data));
+    if (error.response?.status === 400 || error.response?.status === 500) {
+      throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
 };
@@ -108,8 +108,8 @@ export const adminRegister = async (data: AdminRegisterData): Promise<TokenData>
     const res: Response200<TokenData> = response.data;
     return res.data;
   } catch (error) {
-    if (error.response.status === 400 || error.response.status === 500) {
-      throw new Error(JSON.stringify(error.response.data));
+    if (error.response?.status === 400 || error.response?.status === 500) {
+      throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
 };
@@ -125,8 +125,8 @@ export const approvedStudentOutpass = async (): Promise<OutpassResultsData[]> =>
     const res: Response200<OutpassResultsData[]> = response.data;
     return res.data;
   } catch (error) {
-    if (error.response.status === 500) {
-      throw new Error(JSON.stringify(error.response.data));
+    if (error.response?.status === 500) {
+      throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
 };
@@ -142,13 +142,13 @@ export const rejectedStudentOutpass = async (): Promise<OutpassResultsData[]> =>
     const res: Response200<OutpassResultsData[]> = response.data;
     return res.data;
   } catch (error) {
-    if (error.response.status === 500) {
-      throw new Error(JSON.stringify(error.response.data));
+    if (error.response?.status === 500) {
+      throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
 };
 
-export const getToken = async (tokenId: any): Promise<getTokenData> => {
+export const getToken = async (tokenId: string): Promise<getTokenData> => {
   try {
     const response = await axios.get(
       `${process.env.EXPO_PUBLIC_BACKEND_URL}/user/getToken?tokenId=${encodeURIComponent(tokenId)}`,
@@ -157,8 +157,21 @@ export const getToken = async (tokenId: any): Promise<getTokenData> => {
     const res: Response200<getTokenData> = response.data;
     return res.data;
   } catch (error) {
-    if (error.response.status === 401 || error.response.status === 500) {
-      throw new Error(JSON.stringify(error.response.data));
+    if (error.response?.status === 401 || error.response?.status === 500) {
+      throw new Error(JSON.stringify(error.response?.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const checkToken = async (tokenId: string): Promise<string> => {
+  try {
+    const response = await axios.patch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/checker/checkToken`, { tokenId });
+
+    const res: Response201<any> = response.data;
+    return res.message;
+  } catch (error) {
+    if ([400, 404, 500].includes(error.response?.status)) {
+      throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
 };
