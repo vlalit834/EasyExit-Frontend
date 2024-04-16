@@ -25,6 +25,27 @@ export default function HomeLayout() {
         }}
       >
         <Tabs.Screen
+          name='adminHome'
+          redirect={role !== Role.ADMIN}
+          options={{
+            headerShown: true,
+            title: 'EasyExit',
+            tabBarIcon({ focused, color, size }) {
+              return <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />;
+            },
+          }}
+        />
+        <Tabs.Screen
+          name='checkerHome'
+          // redirect={role !== Role.CHECKER}
+          options={{
+            title: 'Home',
+            tabBarIcon({ focused, color, size }) {
+              return <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />;
+            },
+          }}
+        />
+        <Tabs.Screen
           name='home'
           // redirect={role !== Role.USER}
           options={{
@@ -35,7 +56,7 @@ export default function HomeLayout() {
           }}
         />
         <Tabs.Screen
-          name='ManagerHome'
+          name='managerHome'
           options={{
             title: 'managerHome',
             tabBarIcon({ focused, color, size }) {

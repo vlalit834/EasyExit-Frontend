@@ -27,6 +27,7 @@ export default function CustomCardManager(props: CustomCardManagerProps) {
       justifyContent='space-between'
       padding={12}
       marginBottom={8}
+      onPress={props.onPress}
     >
       <View fd='row' jc='space-between'>
         <View>

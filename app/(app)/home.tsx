@@ -48,7 +48,7 @@ export default function Home() {
       <View h='35%' w={'100%'}>
         <ImageBackground source={require('@/assets/images.jpeg')} style={{ flex: 1 }}>
           <View style={styles.overlay}>
-            <H2 col={'white'}>Welcome to EasyExit</H2>
+            <H2 fontWeight={'bold'} col={'white'}>Welcome to EasyExit</H2>
             <H4 col={'white'}>Manage Your Outpass</H4>
           </View>
         </ImageBackground>
