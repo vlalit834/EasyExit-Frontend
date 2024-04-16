@@ -42,6 +42,18 @@ export default function AuthLayout() {
             title: 'Rejected Outpass',
           }}
         />
+        <Stack.Screen
+          name='generateOutpass'
+          options={{
+            title: 'Generate OutPass',
+          }}
+        />
+        <Stack.Screen
+          name='pendingOutpass'
+          options={{
+            title: 'Pending OutPass',
+          }}
+        />
       </Stack>
     </>
   );

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { rejectedStudentOutpass } from '@/services/api';
 import { Spinner, Image, ScrollView } from 'tamagui';
 import CustomCard from '@/components/CustomCard';
+import { TokenStatus } from '@/interfaces/TokenStatus';
 
 export default function RejectedOutpass() {
   const { data = [], isLoading } = useQuery({
@@ -12,7 +13,7 @@ export default function RejectedOutpass() {
   });
 
   return (
-    <ScrollView>
+    <ScrollView style={{ flex: 1, backgroundColor: '#fbfdff' }}>
       <SafeAreaView style={{ flex: 1, paddingHorizontal: 10, paddingTop: 10, alignItems: 'center' }}>
         {isLoading ?
           <Spinner size='large' color='$blue1Dark' />
@@ -21,8 +22,8 @@ export default function RejectedOutpass() {
         : data.map((value, index) => (
             <CustomCard
               value={value.token}
-              status='rejected'
-              approvedBy={value.acceptedBy}
+              status={TokenStatus.REJECTED}
+              acceptedBy={value.acceptedBy}
               startTime={value.startTime}
               endTime={value.endTime}
               heading={value.heading}

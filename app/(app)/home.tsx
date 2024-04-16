@@ -6,9 +6,9 @@ import { outPassStatus } from '@/constants/outPassStatus';
 import { Ionicons } from '@expo/vector-icons';
 import CustomCard from '@/components/CustomCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TokenStatus } from '@/interfaces/TokenStatus';
 import { useQuery } from '@tanstack/react-query';
 import { getToken } from '@/services/api';
+import { router } from 'expo-router';
 
 export default function Home() {
   const [showOutPass, setShowOutPass] = React.useState<boolean>(false);
@@ -18,7 +18,7 @@ export default function Home() {
   //   token: 'token',
   //   acceptedBy: 'Admin',
   //   phoneNumber: 1234567890,
-  //   status: TokenStatus.ISSUED,
+  //   status: TokenStatus.REJECTED,
   //   heading: 'Outpass for 2 hours',
   //   startTime: new Date(),
   //   endTime: new Date(),
@@ -28,17 +28,19 @@ export default function Home() {
 
   // const data = tempData;
 
+  React.useEffect(() => {
+    (async () => {
+      const tokenId = await AsyncStorage.getItem('tokenId');
+      if (!tokenId) return;
+      setTokenId(tokenId);
+      setShowOutPass(true);
+    })();
+  });
+
   const { data, isLoading } = useQuery({
     queryKey: ['getToken'],
     queryFn: () => getToken(tokenId),
     enabled: showOutPass,
-  });
-
-  React.useEffect(() => {
-    (async () => {
-      const tokenId = await AsyncStorage.getItem('tokenId');
-      setTokenId(tokenId);
-    })();
   });
 
   return (
@@ -52,12 +54,12 @@ export default function Home() {
         </ImageBackground>
       </View>
       <ScrollView style={{ padding: 10 }}>
-        {showOutPass && (
+        {showOutPass && !isLoading && (
           <CustomCard
-            acceptedBy={data.acceptedBy}
+            acceptedBy={data?.acceptedBy}
             endTime={data.endTime}
             heading={data.heading}
-            phoneNumber={data.phoneNumber}
+            phoneNumber={data?.phoneNumber}
             key={data.token}
             reason={data.reason}
             startTime={data.startTime}
@@ -75,7 +77,24 @@ export default function Home() {
                 mb='$3'
                 backgroundColor={'#fbfdff'}
                 key={status.id}
-                onPress={status.status === 'Generate' ? () => setShowOutPass(true) : () => () => {}}
+                onPress={() => {
+                  switch (status.status) {
+                    case 'Approved':
+                      router.push('/(stack)/approvedOutpass');
+                      break;
+                    case 'Denied':
+                      router.push('/(stack)/rejectedOutpass');
+                      break;
+                    case 'Generate':
+                      router.push('/(stack)/generateOutpass');
+                      break;
+                    case 'Pending':
+                      router.push('/(stack)/pendingOutpass');
+                      break;
+                    default:
+                      console.log('nothing');
+                  }
+                }}
               >
                 <Ionicons name={status.iconName} size={50} color={status.color} />
                 <H5>{status.status}</H5>

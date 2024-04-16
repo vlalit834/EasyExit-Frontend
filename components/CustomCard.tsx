@@ -5,6 +5,7 @@ import { View, Card, XStack, H3, Paragraph, Separator, YStack, H5, H2, H4, H6 } 
 import SvgQRCode from 'react-native-qrcode-svg';
 import { CustomCardProps } from '@/interfaces/CustomCard';
 import { TokenStatus } from '@/interfaces/TokenStatus';
+import { toCapitalize } from '@/utils/toCapitalize';
 
 export default function CustomCard(props: CustomCardProps) {
   const iconName: Record<
@@ -28,7 +29,7 @@ export default function CustomCard(props: CustomCardProps) {
     LATE: '#f45954',
   };
   return (
-    <Card size={'$3'} bordered w={'100%'} my={'$2'} backgroundColor={'#fbfdff'}>
+    <Card animation={'bouncy'} size={'$3'} bordered w={'100%'} my={'$2'} bg={'#fbfdff'}>
       <Card.Header padded>
         <XStack jc='space-between'>
           <View>
@@ -66,7 +67,7 @@ export default function CustomCard(props: CustomCardProps) {
                 </Paragraph>
               )}
               <Paragraph theme='alt2'>
-                {props.status === TokenStatus.ISSUED ? TokenStatus.ISSUED : TokenStatus.REJECTED} By
+                {props.status === TokenStatus.REJECTED ? toCapitalize(TokenStatus.REJECTED) : toCapitalize(TokenStatus.ISSUED)} by
               </Paragraph>
               <H6 theme='alt1'>{props.acceptedBy}</H6>
             </YStack>

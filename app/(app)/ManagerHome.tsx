@@ -4,6 +4,7 @@ import React from 'react';
 import { ScrollView, View, H2, H4 } from 'tamagui';
 import CustomCardManager from '@/components/CustomCardManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 
 export default function ManagerHome() {
   const [pendingOutPassNo, setPendingOutPassNo] = React.useState<Number>(0);

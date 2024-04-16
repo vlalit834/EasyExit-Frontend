@@ -5,6 +5,8 @@ import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase6
 import axios from 'axios';
 import { getItemAsync } from 'expo-secure-store';
 
+import { generateOutPassData } from '@/interfaces/User';
+
 export type SearchResultsData = {
   id: string;
   name: string;
@@ -115,7 +117,7 @@ export const adminRegister = async (data: AdminRegisterData): Promise<TokenData>
 
 export const approvedStudentOutpass = async (): Promise<OutpassResultsData[]> => {
   try {
-    const token = getItemAsync('token');
+    const token = await getItemAsync('token');
     const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/user/approvedOutpass`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -132,7 +134,7 @@ export const approvedStudentOutpass = async (): Promise<OutpassResultsData[]> =>
 
 export const rejectedStudentOutpass = async (): Promise<OutpassResultsData[]> => {
   try {
-    const token = getItemAsync('token');
+    const token = await getItemAsync('token');
     const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/user/rejectedOutpass`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -149,14 +151,41 @@ export const rejectedStudentOutpass = async (): Promise<OutpassResultsData[]> =>
 
 export const getToken = async (tokenId: any): Promise<getTokenData> => {
   try {
+    const token = await getItemAsync('token');
     const response = await axios.get(
-      `${process.env.EXPO_PUBLIC_BACKEND_URL}/user/getToken?tokenId=${encodeURIComponent(tokenId)}`,
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}/user/getToken?tokenId=${encodeURIComponent(tokenId)}`,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
     );
 
     const res: Response200<getTokenData> = response.data;
+    res.data.startTime = new Date(res.data.startTime);
+    res.data.endTime = new Date(res.data.endTime);
     return res.data;
   } catch (error) {
     if (error.response.status === 401 || error.response.status === 500) {
+      throw new Error(JSON.stringify(error.response.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const generateOutPass = async (data: generateOutPassData): Promise<TokenData> => {
+  try {
+    const token = await getItemAsync('token');
+    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/user/requestToken`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 201) {
+      const res: Response200<TokenData> = response.data;
+      return res.data;
+    }
+  } catch (error) {
+    if ([401, 500].includes(error.response.status)) {
       throw new Error(JSON.stringify(error.response.data));
     } else throw new Error('Unknown Error');
   }
