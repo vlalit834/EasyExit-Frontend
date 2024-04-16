@@ -56,7 +56,7 @@ export default function HomeLayout() {
           }}
         />
         <Tabs.Screen
-          name='ManagerHome'
+          name='managerHome'
           options={{
             title: 'managerHome',
             tabBarIcon({ focused, color, size }) {

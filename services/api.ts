@@ -24,6 +24,7 @@ export type getTokenData = {
 export type OutpassResultsData = {
   token: string;
   reason?: string;
+  email?: string;
   heading: string;
   startTime: Date;
   endTime: Date;

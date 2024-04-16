@@ -42,6 +42,12 @@ export default function AuthLayout() {
             title: 'Rejected Outpass',
           }}
         />
+        <Stack.Screen
+          name='managerApproved'
+          options={{
+            title: 'Approved Outpass',
+          }}
+        />
       </Stack>
     </>
   );

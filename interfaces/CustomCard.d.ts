@@ -9,4 +9,6 @@ export interface CustomCardProps {
   acceptedBy?: string;
   phoneNumber?: number;
   reason?: string;
+  email?:string;
+  requestedBy?:string;
 }
