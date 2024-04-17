@@ -5,26 +5,9 @@ import { Link } from 'expo-router';
 import { View, Card, XStack, H4, Paragraph, Separator, YStack, H6 } from 'tamagui';
 import { CustomCardProps } from '@/interfaces/CustomCard';
 import { TokenStatus } from '@/interfaces/TokenStatus';
+import { iconName, colorName } from '@/constants/outPassStatus';
 
 export default function CustomCard(props: CustomCardProps) {
-  const iconName: Record<
-    string,
-    'checkmark-done-circle' | 'alert-circle' | 'close-circle' | 'hourglass' | 'sync-sharp' | 'warning'
-  > = {
-    ISSUED: 'checkmark-done-circle',
-    EXPIRED: 'alert-circle',
-    REQUESTED: 'hourglass',
-    IN_USE: 'sync-sharp',
-    LATE: 'warning',
-  };
-
-  const colorName = {
-    ISSUED: '#21bf73',
-    EXPIRED: '#fa9715',
-    REQUESTED: '#fa9715',
-    IN_USE: '#21bf73',
-    LATE: '#f45954',
-  };
   
   return (
     <Card size={'$3'} bordered w={'100%'} my={'$2'} backgroundColor={'#fbfdff'}>

@@ -1,4 +1,4 @@
-import { Response200, Response201 } from '@/interfaces/api';
+import { Response200, Response204 } from '@/interfaces/api';
 import { AdminRegisterData, LoginData, StudentRegisterData } from '@/interfaces/Auth';
 import { TokenStatus } from '@/interfaces/TokenStatus';
 import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
@@ -10,6 +10,14 @@ import { generateOutPassData } from '@/interfaces/User';
 export type SearchResultsData = {
   id: string;
   name: string;
+};
+
+export type getCheckedTokensData = {
+  token: string;
+  heading: string;
+  status: TokenStatus;
+  exitTime?: Date | null;
+  returnedTime?: Date | null;
 };
 
 export type getTokenData = {
@@ -118,14 +126,18 @@ export const adminRegister = async (data: AdminRegisterData): Promise<TokenData>
 
 export const approvedStudentOutpass = async (): Promise<OutpassResultsData[]> => {
   try {
-    const token = await getItemAsync('token');
+    const jwtToken = await getItemAsync('token');
     const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/user/approvedOutpass`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
       },
     });
     const res: Response200<OutpassResultsData[]> = response.data;
-    return res.data;
+    return res.data.map(data => {
+      data.startTime = new Date(data.startTime);
+      data.endTime = new Date(data.endTime);
+      return data;
+    });
   } catch (error) {
     if (error.response?.status === 500) {
       throw new Error(JSON.stringify(error.response?.data));
@@ -135,14 +147,18 @@ export const approvedStudentOutpass = async (): Promise<OutpassResultsData[]> =>
 
 export const rejectedStudentOutpass = async (): Promise<OutpassResultsData[]> => {
   try {
-    const token = await getItemAsync('token');
+    const jwtToken = await getItemAsync('token');
     const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/user/rejectedOutpass`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
       },
     });
     const res: Response200<OutpassResultsData[]> = response.data;
-    return res.data;
+    return res.data.map(data => {
+      data.startTime = new Date(data.startTime);
+      data.endTime = new Date(data.endTime);
+      return data;
+    });
   } catch (error) {
     if (error.response?.status === 500) {
       throw new Error(JSON.stringify(error.response?.data));
@@ -152,13 +168,14 @@ export const rejectedStudentOutpass = async (): Promise<OutpassResultsData[]> =>
 
 export const getToken = async (tokenId: string): Promise<getTokenData> => {
   try {
-    const token = await getItemAsync('token');
+    const jwtToken = await getItemAsync('token');
     const response = await axios.get(
-      `${process.env.EXPO_PUBLIC_BACKEND_URL}/user/getToken?tokenId=${encodeURIComponent(tokenId)}`,{
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}/user/getToken?tokenId=${encodeURIComponent(tokenId)}`,
+      {
         headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      }
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      },
     );
 
     const res: Response200<getTokenData> = response.data;
@@ -174,9 +191,18 @@ export const getToken = async (tokenId: string): Promise<getTokenData> => {
 
 export const checkToken = async (tokenId: string): Promise<string> => {
   try {
-    const response = await axios.patch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/checker/checkToken`, { tokenId });
+    const jwtToken = await getItemAsync('token');
+    const response = await axios.patch(
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}/checker/checkToken`,
+      { tokenId },
+      {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      },
+    );
 
-    const res: Response201<any> = response.data;
+    const res: Response204 = response.data;
     return res.message;
   } catch (error) {
     if ([400, 404, 500].includes(error.response?.status)) {
@@ -187,10 +213,10 @@ export const checkToken = async (tokenId: string): Promise<string> => {
 
 export const generateOutPass = async (data: generateOutPassData): Promise<TokenData> => {
   try {
-    const token = await getItemAsync('token');
+    const jwtToken = await getItemAsync('token');
     const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/user/requestToken`, data, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
       },
     });
 
@@ -201,6 +227,31 @@ export const generateOutPass = async (data: generateOutPassData): Promise<TokenD
   } catch (error) {
     if ([401, 500].includes(error.response.status)) {
       throw new Error(JSON.stringify(error.response.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const getCheckedTokens = async (search?: string | null): Promise<getCheckedTokensData[]> => {
+  try {
+    const jwtToken = await getItemAsync('token');
+    const response = await axios.get(
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}/checker/checkedTokens${!search ? '' : `?search=${encodeURIComponent(search)}`}`,
+      {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      },
+    );
+    const res: Response200<getCheckedTokensData[]> = response.data;
+
+    return res.data.map(data => {
+      if (data.exitTime) data.exitTime = new Date(data.exitTime);
+      if (data.returnedTime) data.returnedTime = new Date(data.returnedTime);
+      return data;
+    });
+  } catch (error) {
+    if (error.response?.status === 401 || error.response?.status === 500) {
+      throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
 };

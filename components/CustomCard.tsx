@@ -6,28 +6,10 @@ import SvgQRCode from 'react-native-qrcode-svg';
 import { CustomCardProps } from '@/interfaces/CustomCard';
 import { TokenStatus } from '@/interfaces/TokenStatus';
 import { toCapitalize } from '@/utils/toCapitalize';
+import { colorName, iconName } from '@/constants/outPassStatus';
 
 export default function CustomCard(props: CustomCardProps) {
-  const iconName: Record<
-    string,
-    'checkmark-done-circle' | 'alert-circle' | 'close-circle' | 'hourglass' | 'sync-sharp' | 'warning'
-  > = {
-    ISSUED: 'checkmark-done-circle',
-    EXPIRED: 'alert-circle',
-    REJECTED: 'close-circle',
-    REQUESTED: 'hourglass',
-    IN_USE: 'sync-sharp',
-    LATE: 'warning',
-  };
-
-  const colorName = {
-    ISSUED: '#21bf73',
-    EXPIRED: '#fa9715',
-    REJECTED: '#f45954',
-    REQUESTED: '#fa9715',
-    IN_USE: '#21bf73',
-    LATE: '#f45954',
-  };
+  
   return (
     <Card animation={'bouncy'} size={'$3'} bordered w={'100%'} my={'$2'} bg={'#fbfdff'}>
       <Card.Header padded>

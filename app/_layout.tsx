@@ -35,7 +35,6 @@ export default function RootLayout() {
       router.push('/checkerHome');
     }, 2000);
     return () => clearTimeout(time);
-
   }, [loaded]);
 
   if (!loaded) return null;

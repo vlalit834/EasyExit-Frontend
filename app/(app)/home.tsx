@@ -14,20 +14,6 @@ export default function Home() {
   const [showOutPass, setShowOutPass] = React.useState<boolean>(false);
   const [tokenId, setTokenId] = React.useState<string>('');
 
-  // const tempData = {
-  //   token: 'token',
-  //   acceptedBy: 'Admin',
-  //   phoneNumber: 1234567890,
-  //   status: TokenStatus.REJECTED,
-  //   heading: 'Outpass for 2 hours',
-  //   startTime: new Date(),
-  //   endTime: new Date(),
-  //   value: '123456',
-  //   reason: 'Just for Fun',
-  // };
-
-  // const data = tempData;
-
   React.useEffect(() => {
     (async () => {
       const tokenId = await AsyncStorage.getItem('tokenId');
@@ -48,7 +34,9 @@ export default function Home() {
       <View h='35%' w={'100%'}>
         <ImageBackground source={require('@/assets/images.jpeg')} style={{ flex: 1 }}>
           <View style={styles.overlay}>
-            <H2 fontWeight={'bold'} col={'white'}>Welcome to EasyExit</H2>
+            <H2 fontWeight={'bold'} col={'white'}>
+              Welcome to EasyExit
+            </H2>
             <H4 col={'white'}>Manage Your Outpass</H4>
           </View>
         </ImageBackground>

@@ -54,6 +54,12 @@ export default function AuthLayout() {
             title: 'Pending OutPass',
           }}
         />
+        <Stack.Screen
+          name='scanQRcode'
+          options={{
+            title: 'Scan QR Code',
+          }}
+        />
       </Stack>
     </>
   );

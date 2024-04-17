@@ -5,10 +5,9 @@ export interface Response200<D> {
   actions?: any;
 }
 
-export interface Response201<D> {
+export interface Response204 {
   status: string;
   message: string;
-  data?: D;
 }
 
 export interface Response500<D> {

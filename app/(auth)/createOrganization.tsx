@@ -13,7 +13,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, ButtonText, Form, H6, Label, View, XStack } from 'tamagui';
+import { Button, ButtonText, Form, H6, View, XStack } from 'tamagui';
 import * as SecureStore from 'expo-secure-store';
 import RNDateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import CustomTextInput from '@/components/CustomTextInput';

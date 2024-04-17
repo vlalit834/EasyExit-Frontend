@@ -65,12 +65,7 @@ export default function scanQRcode() {
           </View>
         </CameraView>
         <AlertDialog.Portal>
-          <AlertDialog.Overlay
-            animation='quick'
-            opacity={0.5}
-            enterStyle={{ opacity: 0 }}
-            exitStyle={{ opacity: 0 }}
-          />
+          <AlertDialog.Overlay animation='quick' opacity={0.5} enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
           <AlertDialog.Content
             bordered
             elevate
@@ -91,7 +86,12 @@ export default function scanQRcode() {
             y={0}
           >
             <YStack gap='$4'>
-              <Image als='center' src={error ? require('@/assets/wrong.gif') : require('@/assets/tick.gif')} w={200} h={200} />
+              <Image
+                als='center'
+                src={error ? require('@/assets/wrong.gif') : require('@/assets/tick.gif')}
+                w={200}
+                h={200}
+              />
               <AlertDialog.Title als='center'>Verified</AlertDialog.Title>
               <AlertDialog.Description als='center'>
                 Student QR code has been {error ? 'Rejected' : 'verified'}
