@@ -56,3 +56,9 @@ export type getSupervisorData = {
   manager: Pick<ProfileData, 'name' | 'email' | 'phoneNumber' | 'profileImg'>[];
   checker: Pick<ProfileData, 'name' | 'email' | 'phoneNumber' | 'profileImg'>[];
 };
+
+export type TokenStats = {
+  pending: number;
+  approved: number;
+  denied: number;
+};

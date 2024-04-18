@@ -2,9 +2,24 @@ import axios from 'axios';
 import { getItemAsync } from 'expo-secure-store';
 
 import { Response200, Response204 } from '@/interfaces/ResponseCodes';
-import { AdminRegisterData, LoginData, StudentRegisterData, addSupervisorData, generateOutPassData } from '@/interfaces/ApiDTO';
+import {
+  AdminRegisterData,
+  LoginData,
+  StudentRegisterData,
+  addSupervisorData,
+  generateOutPassData,
+} from '@/interfaces/ApiDTO';
 import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
-import { SearchResultsData, TokenData, OutpassResultsData, getTokenData, CheckedTokensData, getSupervisorData, ProfileData } from '@/interfaces/ApiResults';
+import {
+  SearchResultsData,
+  TokenData,
+  OutpassResultsData,
+  getTokenData,
+  CheckedTokensData,
+  getSupervisorData,
+  ProfileData,
+  TokenStats,
+} from '@/interfaces/ApiResults';
 
 export const getSearchResults = async (searchString: string): Promise<SearchResultsData[]> => {
   try {
@@ -53,7 +68,7 @@ export const studentRegister = async (data: StudentRegisterData): Promise<TokenD
     const res: Response200<TokenData> = response.data;
     return res.data;
   } catch (error) {
-    if ([400,500].includes(error.response?.status)) {
+    if ([400, 500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
@@ -77,7 +92,7 @@ export const adminRegister = async (data: AdminRegisterData): Promise<TokenData>
     const res: Response200<TokenData> = response.data;
     return res.data;
   } catch (error) {
-    if ([400,500].includes(error.response?.status)) {
+    if ([400, 500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
@@ -86,7 +101,7 @@ export const adminRegister = async (data: AdminRegisterData): Promise<TokenData>
 export const approvedStudentOutpass = async (): Promise<OutpassResultsData[]> => {
   try {
     const jwtToken = await getItemAsync('token');
-    const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/user/approvedOutpass`, {
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/manager/tokens/accepted`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
@@ -140,18 +155,19 @@ export const getToken = async (tokenId: string): Promise<getTokenData> => {
     const res: Response200<getTokenData> = response.data;
     res.data.startTime = new Date(res.data.startTime);
     res.data.endTime = new Date(res.data.endTime);
+
     return res.data;
   } catch (error) {
-    if ([401,500].includes(error.response?.status)) {
+    if ([401, 500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
 };
 
-export const checkToken = async (tokenId: string): Promise<string> => {
+export const checkToken = async (tokenId: string): Promise<void> => {
   try {
     const jwtToken = await getItemAsync('token');
-    const response = await axios.patch(
+    await axios.patch(
       `${process.env.EXPO_PUBLIC_BACKEND_URL}/checker/checkToken`,
       { tokenId },
       {
@@ -160,9 +176,6 @@ export const checkToken = async (tokenId: string): Promise<string> => {
         },
       },
     );
-
-    const res: Response204 = response.data;
-    return res.message;
   } catch (error) {
     if ([400, 404, 500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
@@ -209,7 +222,7 @@ export const getCheckedTokens = async (search?: string | null): Promise<CheckedT
       return data;
     });
   } catch (error) {
-    if ([401,500].includes(error.response?.status)) {
+    if ([401, 500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
@@ -227,23 +240,22 @@ export const getSupervisor = async (): Promise<getSupervisorData> => {
     const res: Response200<getSupervisorData> = response.data;
     return res.data;
   } catch (error) {
-    if ([400,500].includes(error.response?.status)) {
+    if ([400, 500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
-}
+};
 
-export const addSupervisor = async (data: addSupervisorData): Promise<string> => {
+export const addSupervisor = async (data: addSupervisorData): Promise<void> => {
   try {
     const jwtToken = await getItemAsync('token');
-    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/admin/supervisors`, data, {
+    await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/admin/supervisors`, data, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
     });
 
-    const res: Response204 = response.data;
-    return res.message;
+    return;
   } catch (error) {
     if ([400, 500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
@@ -271,7 +283,9 @@ export const getProfile = async (): Promise<ProfileData> => {
   }
 };
 
-export const updateProfile = async (data: Partial<Pick<ProfileData, 'name' | 'email' | 'phoneNumber' | 'profileImg'>>): Promise<string> => {
+export const updateProfile = async (
+  data: Partial<Pick<ProfileData, 'name' | 'email' | 'phoneNumber' | 'profileImg'>>,
+): Promise<void> => {
   try {
     if (Object.keys(data).length === 0) throw new Error('No data to update');
     const jwtToken = await getItemAsync('token');
@@ -282,17 +296,86 @@ export const updateProfile = async (data: Partial<Pick<ProfileData, 'name' | 'em
       } else formData.append(key, data[key]);
     }
 
-    const response = await axios.put(`${process.env.EXPO_PUBLIC_BACKEND_URL}/profile`, formData, {
+    await axios.put(`${process.env.EXPO_PUBLIC_BACKEND_URL}/profile`, formData, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
         'Content-Type': 'multipart/form-data',
       },
     });
+    return;
+  } catch (error) {
+    if ([500].includes(error.response?.status)) {
+      throw new Error(JSON.stringify(error.response?.data));
+    } else throw new Error('Unknown Error');
+  }
+};
 
+export const getTokenStats = async (): Promise<TokenStats> => {
+  try {
+    const jwtToken = await getItemAsync('token');
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/manager/tokens/stats`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+
+    if (response.status === 200) {
+      const res: Response200<TokenStats> = response.data;
+      return res.data;
+    }
+  } catch (error) {
+    if (error.response?.status === 500) {
+      throw new Error(JSON.stringify(error.response?.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const getPendingOutPass = async (): Promise<(OutpassResultsData & { name: string; profileImg: string })[]> => {
+  try {
+    const jwtToken = await getItemAsync('token');
+
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/manager/tokens/pending`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+    const res: Response200<(OutpassResultsData & { name: string; profileImg: string })[]> = response.data;
+    return res.data;
+  } catch (error) {
+    if (error.response?.status === 500) {
+      throw new Error(JSON.stringify(error.response?.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const acceptToken = async (data: { token: string }): Promise<void> => {
+  try {
+    const jwtToken = await getItemAsync('token');
+    await axios.patch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/manager/token/accept`, data, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+    return;
+  } catch (error) {
+    if ([400, 404, 304, 500].includes(error.response?.status)) {
+      throw new Error(JSON.stringify(error.response?.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const rejectToken = async (data: { token: string }): Promise<string> => {
+  try {
+    const jwtToken = await getItemAsync('token');
+    const response = await axios.patch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/manager/token/reject`, data, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
     const res: Response204 = response.data;
     return res.message;
   } catch (error) {
-    if ([500].includes(error.response?.status)) {
+    if ([400, 404, 304, 500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
