@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Button, ButtonText, Text, RadioGroup, Label, YStack, H6 } from 'tamagui';
 import CustomTextInput from '@/components/CustomTextInput';
@@ -13,7 +13,34 @@ import { ActivityIndicator, Image, ToastAndroid } from 'react-native';
 import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 import { Heading } from '@/tamagui.config';
 
+import useNotification from '@/hooks/useNotification';
+
+import messaging from '@react-native-firebase/messaging';
+
+
 export default function Login() {
+  const { subscribeTopic, setBackgroundMessageHandler, requestUserPermission, handleNotification, getToken } = useNotification();
+  
+  useEffect(() => {
+    requestUserPermission().then(() => {
+      getToken();
+    })
+
+    messaging().getInitialNotification().then(remoteM => {
+      if (remoteM) {
+        console.log("Meassage cause app to open from quit state ->", remoteM.notification);
+      }
+    })
+
+    messaging().onNotificationOpenedApp((remoteMessage => {
+      console.log("Notification caused the app to open from background state: ", remoteMessage.notification);
+    }))
+    
+    setBackgroundMessageHandler();
+    handleNotification();
+    subscribeTopic('ann');
+  }, []);
+
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [role, setRole] = useState<Role>(Role.ADMIN);
@@ -50,6 +77,14 @@ export default function Login() {
       }
     }
   };
+
+  // if (process.env.STATUS === "DEVELOPMENT") {
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     router.push('/aaa');
+  //     console.log('hi');
+  //   }, 20000);
+  // }, []);
 
   return (
     <SafeAreaView style={{ backgroundColor: '#fbfdff', flex: 1 }}>
