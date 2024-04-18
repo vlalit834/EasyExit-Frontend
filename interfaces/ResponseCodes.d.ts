@@ -5,6 +5,11 @@ export interface Response200<D> {
   actions?: any;
 }
 
+export interface Response204 {
+  status: string;
+  message: string;
+}
+
 export interface Response500<D> {
   status: string;
   message: string;

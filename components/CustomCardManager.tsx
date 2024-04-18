@@ -27,6 +27,7 @@ export default function CustomCardManager(props: CustomCardManagerProps) {
       justifyContent='space-between'
       padding={12}
       marginBottom={8}
+      onPress={props.onPress}
     >
       <View fd='row' jc='space-between'>
         <View>
@@ -38,7 +39,7 @@ export default function CustomCardManager(props: CustomCardManagerProps) {
         </View>
       </View>
       <Separator p={0} borderColor={'$blue6Light'}/>
-      <Text fontSize={'$4'}>{props.text}</Text>
+      <Text theme='alt2' fontSize={'$4'}>{props.text}</Text>
     </View>
   );
 }

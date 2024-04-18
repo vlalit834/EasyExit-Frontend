@@ -1,9 +1,9 @@
 import { View, Input } from 'tamagui';
-import { TextInputProps } from '@/interfaces/Auth';
+import { TextInputProps } from '@/interfaces/CustomTextInput';
 
 export default function CustomTextInput(props: TextInputProps) {
   return (
-    <View w={'100%'}>
+    <View w={props.width ?? '100%'}>
       <Input
         editable={props.editable ?? true}
         id={props.id}

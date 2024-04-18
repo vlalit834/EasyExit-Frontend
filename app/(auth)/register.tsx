@@ -9,13 +9,13 @@ import * as SecureStore from 'expo-secure-store';
 import { PermissionStatus, launchImageLibraryAsync, requestMediaLibraryPermissionsAsync } from 'expo-image-picker';
 import { Heading } from '@/tamagui.config';
 import CustomTextInput from '@/components/CustomTextInput';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 import CustomSelect from '@/components/CustomSelect';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getSearchResults, studentRegister } from '@/services/api';
 import useDebounce from '@/hooks/useDebounce';
-import { Role } from '@/interfaces/Role';
+import { Role } from '@/constants/Role';
 import * as FileSystem from 'expo-file-system';
 
 export default function Register() {

@@ -13,13 +13,13 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, ButtonText, Form, H6, Label, View, XStack } from 'tamagui';
+import { Button, ButtonText, Form, H6, View, XStack } from 'tamagui';
 import * as SecureStore from 'expo-secure-store';
 import RNDateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import CustomTextInput from '@/components/CustomTextInput';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
-import { Role } from '@/interfaces/Role';
+import { Role } from '@/constants/Role';
 import { adminRegister } from '@/services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

@@ -42,6 +42,30 @@ export default function AuthLayout() {
             title: 'Rejected Outpass',
           }}
         />
+        <Stack.Screen
+          name='generateOutpass'
+          options={{
+            title: 'Generate OutPass',
+          }}
+        />
+        <Stack.Screen
+          name='pendingOutpass'
+          options={{
+            title: 'Pending OutPass',
+          }}
+        />
+        <Stack.Screen
+          name='scanQRcode'
+          options={{
+            title: 'Scan QR Code',
+          }}
+        />
+        <Stack.Screen
+          name='addSupervisors'
+          options={{
+            title: 'Add Supervisors',
+          }}
+        />
       </Stack>
     </>
   );

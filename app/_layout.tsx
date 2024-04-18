@@ -1,5 +1,5 @@
 import React from 'react';
-import { Slot, SplashScreen } from 'expo-router';
+import { Slot, SplashScreen, router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/utils/queryClient';
@@ -31,6 +31,10 @@ export default function RootLayout() {
     if (loaded) {
       SplashScreen.hideAsync();
     }
+    const time = setTimeout(() => {
+      router.push('/checkerHome');
+    }, 500);
+    return () => clearTimeout(time);
   }, [loaded]);
 
   if (!loaded) return null;

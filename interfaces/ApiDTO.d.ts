@@ -1,16 +1,3 @@
-import { KeyboardTypeOptions } from 'react-native';
-
-export interface TextInputProps {
-  value: string;
-  id?: string;
-  onChangeText?: (text: string) => void;
-  placeholder?: string;
-  keyboardType?: KeyboardTypeOptions;
-  secureTextEntry?: boolean;
-  editable?: boolean;
-  error?: boolean;
-}
-
 export interface LoginData {
   email: string;
   password: string;
@@ -36,3 +23,14 @@ export interface AdminRegisterData {
   endTime?: Date;
 }
 
+export interface generateOutPassData {
+  reason: string;
+  startTime: Date;
+  endTime: Date;
+  heading: string;
+}
+
+export interface addSupervisorData {
+  checkerEmails: string[];
+  managerEmails: string[];
+}

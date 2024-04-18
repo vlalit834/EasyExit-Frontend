@@ -2,9 +2,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { approvedStudentOutpass } from '@/services/api';
-import { Spinner, Image, ScrollView, View, H4 } from 'tamagui';
-import CustomCard from '@/components/CustomCard';
-import NoDataSVG from '@/assets/no-data.svg';
+import { Spinner, ScrollView, View, H4 } from 'tamagui';
+import CustomCard from '@/components/CustomCard2';
+import AddNotesSVG from '@/assets/add-notes.svg';
 
 export default function ApprovedOutpass() {
   const { data = [], isLoading } = useQuery({
@@ -13,14 +13,14 @@ export default function ApprovedOutpass() {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fbfdff', alignItems: 'center' }}>
-      <ScrollView style={{ paddingHorizontal: 10, paddingTop: 10 }}>
+    <ScrollView>
+      <SafeAreaView style={{ flex: 1, paddingHorizontal: 10, paddingTop: 10, alignItems: 'center' }}>
         {isLoading ?
           <Spinner size='large' color='$blue1Dark' />
         : data.length === 0 ?
           <View ai='center' pt='$5' gap={40}>
-            <NoDataSVG width={170} height={170} />
-            <H4 fontStyle='italic'>No data</H4>
+            <AddNotesSVG width={170} height={170} />
+            <H4 fontStyle='italic'>Start Approving Outpasses</H4>
           </View>
         : data.map((value, index) => (
             <CustomCard
@@ -28,6 +28,7 @@ export default function ApprovedOutpass() {
               value={value.token}
               status={value.status}
               acceptedBy={value.acceptedBy}
+              email={value.email}
               startTime={value.startTime}
               endTime={value.endTime}
               heading={value.heading}
@@ -35,7 +36,7 @@ export default function ApprovedOutpass() {
             />
           ))
         }
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScrollView>
   );
 }

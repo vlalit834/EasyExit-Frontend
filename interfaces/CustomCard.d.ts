@@ -1,4 +1,4 @@
-import { TokenStatus } from './TokenStatus';
+import { TokenStatus } from '../constants/TokenStatus';
 
 export interface CustomCardProps {
   value?: string;
@@ -9,4 +9,6 @@ export interface CustomCardProps {
   acceptedBy?: string;
   phoneNumber?: number;
   reason?: string;
+  email?:string;
+  requestedBy?:string;
 }
