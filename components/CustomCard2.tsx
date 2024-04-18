@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { View, Card, XStack, H4, Paragraph, Separator, YStack, H6 } from 'tamagui';
 import { CustomCardProps } from '@/interfaces/CustomCard';
-import { TokenStatus } from '@/interfaces/TokenStatus';
+import { TokenStatus } from '@/constants/TokenStatus';
 import { iconName, colorName } from '@/constants/outPassStatus';
 
 export default function CustomCard(props: CustomCardProps) {

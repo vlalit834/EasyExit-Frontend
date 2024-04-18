@@ -6,7 +6,7 @@ import CustomTextInput from '@/components/CustomTextInput';
 import RNDateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { ActivityIndicator, Pressable, ToastAndroid } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
-import { Role } from '@/interfaces/Role';
+import { Role } from '@/constants/Role';
 import { generateOutPass } from '@/services/api';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';

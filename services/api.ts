@@ -1,51 +1,10 @@
-import { Response200, Response204 } from '@/interfaces/api';
-import { AdminRegisterData, LoginData, StudentRegisterData } from '@/interfaces/Auth';
-import { TokenStatus } from '@/interfaces/TokenStatus';
-import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
 import axios from 'axios';
 import { getItemAsync } from 'expo-secure-store';
 
-import { generateOutPassData } from '@/interfaces/User';
-
-export type SearchResultsData = {
-  id: string;
-  name: string;
-};
-
-export type getCheckedTokensData = {
-  token: string;
-  heading: string;
-  status: TokenStatus;
-  exitTime?: Date | null;
-  returnedTime?: Date | null;
-};
-
-export type getTokenData = {
-  token: string;
-  reason?: string;
-  heading: string;
-  startTime: Date;
-  endTime: Date;
-  status: TokenStatus;
-  acceptedBy?: string;
-  phoneNumber?: number;
-};
-
-export type OutpassResultsData = {
-  token: string;
-  reason?: string;
-  email?: string;
-  heading: string;
-  startTime: Date;
-  endTime: Date;
-  status: TokenStatus;
-  acceptedBy: string;
-  phoneNumber: number;
-};
-
-export type TokenData = {
-  token: string;
-};
+import { Response200, Response204 } from '@/interfaces/ResponseCodes';
+import { AdminRegisterData, LoginData, StudentRegisterData, addSupervisorData, generateOutPassData } from '@/interfaces/ApiDTO';
+import convertLocalImageUrlToBase64Url from '@/utils/convertLocalImageUrlToBase64Url';
+import { SearchResultsData, TokenData, OutpassResultsData, getTokenData, CheckedTokensData, getSupervisorData, ProfileData } from '@/interfaces/ApiResults';
 
 export const getSearchResults = async (searchString: string): Promise<SearchResultsData[]> => {
   try {
@@ -94,7 +53,7 @@ export const studentRegister = async (data: StudentRegisterData): Promise<TokenD
     const res: Response200<TokenData> = response.data;
     return res.data;
   } catch (error) {
-    if (error.response?.status === 400 || error.response?.status === 500) {
+    if ([400,500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
@@ -118,7 +77,7 @@ export const adminRegister = async (data: AdminRegisterData): Promise<TokenData>
     const res: Response200<TokenData> = response.data;
     return res.data;
   } catch (error) {
-    if (error.response?.status === 400 || error.response?.status === 500) {
+    if ([400,500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
@@ -139,7 +98,7 @@ export const approvedStudentOutpass = async (): Promise<OutpassResultsData[]> =>
       return data;
     });
   } catch (error) {
-    if (error.response?.status === 500) {
+    if ([500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
@@ -160,7 +119,7 @@ export const rejectedStudentOutpass = async (): Promise<OutpassResultsData[]> =>
       return data;
     });
   } catch (error) {
-    if (error.response?.status === 500) {
+    if ([500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
@@ -183,7 +142,7 @@ export const getToken = async (tokenId: string): Promise<getTokenData> => {
     res.data.endTime = new Date(res.data.endTime);
     return res.data;
   } catch (error) {
-    if (error.response?.status === 401 || error.response?.status === 500) {
+    if ([401,500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }
@@ -231,7 +190,7 @@ export const generateOutPass = async (data: generateOutPassData): Promise<TokenD
   }
 };
 
-export const getCheckedTokens = async (search?: string | null): Promise<getCheckedTokensData[]> => {
+export const getCheckedTokens = async (search?: string | null): Promise<CheckedTokensData[]> => {
   try {
     const jwtToken = await getItemAsync('token');
     const response = await axios.get(
@@ -242,7 +201,7 @@ export const getCheckedTokens = async (search?: string | null): Promise<getCheck
         },
       },
     );
-    const res: Response200<getCheckedTokensData[]> = response.data;
+    const res: Response200<CheckedTokensData[]> = response.data;
 
     return res.data.map(data => {
       if (data.exitTime) data.exitTime = new Date(data.exitTime);
@@ -250,7 +209,90 @@ export const getCheckedTokens = async (search?: string | null): Promise<getCheck
       return data;
     });
   } catch (error) {
-    if (error.response?.status === 401 || error.response?.status === 500) {
+    if ([401,500].includes(error.response?.status)) {
+      throw new Error(JSON.stringify(error.response?.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const getSupervisor = async (): Promise<getSupervisorData> => {
+  try {
+    const jwtToken = await getItemAsync('token');
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/admin/supervisors`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+
+    const res: Response200<getSupervisorData> = response.data;
+    return res.data;
+  } catch (error) {
+    if ([400,500].includes(error.response?.status)) {
+      throw new Error(JSON.stringify(error.response?.data));
+    } else throw new Error('Unknown Error');
+  }
+}
+
+export const addSupervisor = async (data: addSupervisorData): Promise<string> => {
+  try {
+    const jwtToken = await getItemAsync('token');
+    const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/admin/supervisors`, data, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+
+    const res: Response204 = response.data;
+    return res.message;
+  } catch (error) {
+    if ([400, 500].includes(error.response?.status)) {
+      throw new Error(JSON.stringify(error.response?.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const getProfile = async (): Promise<ProfileData> => {
+  try {
+    const jwtToken = await getItemAsync('token');
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/profile`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+
+    const res: Response200<ProfileData> = response.data;
+    res.data.unrestrictedStartTime = new Date(res.data.unrestrictedStartTime);
+    res.data.unrestrictedEndTime = new Date(res.data.unrestrictedEndTime);
+    return res.data;
+  } catch (error) {
+    if ([500].includes(error.response?.status)) {
+      throw new Error(JSON.stringify(error.response?.data));
+    } else throw new Error('Unknown Error');
+  }
+};
+
+export const updateProfile = async (data: Partial<Pick<ProfileData, 'name' | 'email' | 'phoneNumber' | 'profileImg'>>): Promise<string> => {
+  try {
+    if (Object.keys(data).length === 0) throw new Error('No data to update');
+    const jwtToken = await getItemAsync('token');
+    const formData = new FormData();
+    for (const key in data) {
+      if (key === 'profileImg' && data[key]) {
+        formData.append(key, await convertLocalImageUrlToBase64Url(data[key]));
+      } else formData.append(key, data[key]);
+    }
+
+    const response = await axios.put(`${process.env.EXPO_PUBLIC_BACKEND_URL}/profile`, formData, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    const res: Response204 = response.data;
+    return res.message;
+  } catch (error) {
+    if ([500].includes(error.response?.status)) {
       throw new Error(JSON.stringify(error.response?.data));
     } else throw new Error('Unknown Error');
   }

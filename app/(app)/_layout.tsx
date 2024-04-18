@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getItem } from 'expo-secure-store';
-import { Role } from '@/interfaces/Role';
+import { Role } from '@/constants/Role';
 import { StatusBar } from 'expo-status-bar';
 
 export default function HomeLayout() {
@@ -26,9 +26,8 @@ export default function HomeLayout() {
       >
         <Tabs.Screen
           name='adminHome'
-          redirect={role !== Role.ADMIN}
+          // redirect={role !== Role.ADMIN}
           options={{
-            headerShown: true,
             title: 'EasyExit',
             tabBarIcon({ focused, color, size }) {
               return <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />;
@@ -37,7 +36,7 @@ export default function HomeLayout() {
         />
         <Tabs.Screen
           name='checkerHome'
-          // redirect={role !== Role.CHECKER}
+          redirect={role !== Role.CHECKER}
           options={{
             title: 'Home',
             tabBarIcon({ focused, color, size }) {
@@ -47,7 +46,7 @@ export default function HomeLayout() {
         />
         <Tabs.Screen
           name='home'
-          // redirect={role !== Role.USER}
+          redirect={role !== Role.USER}
           options={{
             title: 'Home',
             tabBarIcon({ focused, color, size }) {
@@ -57,19 +56,11 @@ export default function HomeLayout() {
         />
         <Tabs.Screen
           name='managerHome'
+          redirect={role !== Role.MANAGER}
           options={{
             title: 'managerHome',
             tabBarIcon({ focused, color, size }) {
               return <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />;
-            },
-          }}
-        />
-        <Tabs.Screen
-          name='profile'
-          options={{
-            title: 'Profile',
-            tabBarIcon({ focused, color, size }) {
-              return <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={size} />;
             },
           }}
         />
@@ -90,6 +81,15 @@ export default function HomeLayout() {
             title: 'Create Announcement',
             tabBarIcon({ focused, color, size }) {
               return <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} color={color} size={size} />;
+            },
+          }}
+        />
+        <Tabs.Screen
+          name='profile'
+          options={{
+            title: 'Profile',
+            tabBarIcon({ focused, color, size }) {
+              return <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={size} />;
             },
           }}
         />

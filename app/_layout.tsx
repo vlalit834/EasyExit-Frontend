@@ -33,7 +33,7 @@ export default function RootLayout() {
     }
     const time = setTimeout(() => {
       router.push('/checkerHome');
-    }, 2000);
+    }, 500);
     return () => clearTimeout(time);
   }, [loaded]);
 

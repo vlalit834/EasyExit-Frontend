@@ -17,7 +17,7 @@ export default function scanQRcode() {
   const { mutateAsync } = useMutation({
     mutationKey: ['scanQRcode'],
     mutationFn: checkToken,
-    onMutate(data) {
+    onSuccess(data) {
       setError(false);
       setOpen(true);
     },

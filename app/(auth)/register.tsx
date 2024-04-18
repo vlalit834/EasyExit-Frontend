@@ -15,7 +15,7 @@ import CustomSelect from '@/components/CustomSelect';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getSearchResults, studentRegister } from '@/services/api';
 import useDebounce from '@/hooks/useDebounce';
-import { Role } from '@/interfaces/Role';
+import { Role } from '@/constants/Role';
 import * as FileSystem from 'expo-file-system';
 
 export default function Register() {

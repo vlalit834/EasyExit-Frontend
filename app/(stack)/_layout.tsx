@@ -60,6 +60,12 @@ export default function AuthLayout() {
             title: 'Scan QR Code',
           }}
         />
+        <Stack.Screen
+          name='addSupervisors'
+          options={{
+            title: 'Add Supervisors',
+          }}
+        />
       </Stack>
     </>
   );

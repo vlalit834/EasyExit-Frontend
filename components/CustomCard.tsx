@@ -4,7 +4,7 @@ import { Link } from 'expo-router';
 import { View, Card, XStack, H3, Paragraph, Separator, YStack, H5, H2, H4, H6 } from 'tamagui';
 import SvgQRCode from 'react-native-qrcode-svg';
 import { CustomCardProps } from '@/interfaces/CustomCard';
-import { TokenStatus } from '@/interfaces/TokenStatus';
+import { TokenStatus } from '@/constants/TokenStatus';
 import { toCapitalize } from '@/utils/toCapitalize';
 import { colorName, iconName } from '@/constants/outPassStatus';
 

@@ -19,7 +19,7 @@ import RNDateTimePicker, { DateTimePickerEvent } from '@react-native-community/d
 import CustomTextInput from '@/components/CustomTextInput';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
-import { Role } from '@/interfaces/Role';
+import { Role } from '@/constants/Role';
 import { adminRegister } from '@/services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

@@ -7,8 +7,8 @@ import { Link, router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
 import { LoginApi } from '@/services/api';
-import { LoginData } from '@/interfaces/Auth';
-import { Role } from '@/interfaces/Role';
+import { LoginData } from '@/interfaces/ApiDTO';
+import { Role } from '@/constants/Role';
 import { ActivityIndicator, Image, ToastAndroid } from 'react-native';
 import { RadioGroupItemWithLabel } from '@/components/RadioGroupItemWithLabel';
 import { Heading } from '@/tamagui.config';

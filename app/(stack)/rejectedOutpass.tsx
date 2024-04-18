@@ -1,10 +1,10 @@
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { rejectedStudentOutpass } from '@/services/api';
 import { Spinner, ScrollView, View, H4 } from 'tamagui';
 import CustomCard from '@/components/CustomCard';
-import { TokenStatus } from '@/interfaces/TokenStatus';
+import { TokenStatus } from '@/constants/TokenStatus';
 import NoDataSVG from '@/assets/no-data.svg';
 
 export default function RejectedOutpass() {
