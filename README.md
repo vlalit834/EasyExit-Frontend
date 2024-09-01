@@ -27,7 +27,7 @@ EasyExit is a QR code based outpass management system for hostels. It is a mobil
 1. **Clone the repository**:
 
 ```bash
-git clone https://github.com/bhupesh98/EasyExit-Frontend.git
+git clone https://github.com/vlalit834/EasyExit-Frontend.git
 ```
 
 2. **Navigate to the project directory**:
