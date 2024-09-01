@@ -2,7 +2,7 @@
 
 EasyExit is a QR code based outpass management system for hostels. It is a mobile application that allows students to generate outpasses and get them approved by the Warden. The outpass can be scanned by the Guard to verify the outpass. The system also has an automatic approval system for outpasses generated in unrestricted time. The system also has an admin panel to manage the outpasses and a user panel to generate outpasses. The system also has app notifications for general announcements and return to hostel timeout.
 
-## EasyExit Backend: [Github Repo Link](https://github.com/bhupesh98/EasyExit-Backend) 
+## EasyExit Backend: [Github Repo Link](https://github.com/vlalit834/EasyExit-Backend) 
 
 ## 📚 Table of Contents
 
